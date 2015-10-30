@@ -1,5 +1,5 @@
 # fjdbc
-Functional wrapper for JPDBC API.
+Functional wrapper for the JDBC API.
 
 Requires Java >= 8.
 
