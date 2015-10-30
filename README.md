@@ -7,29 +7,29 @@ Requires Java >= 8.
 ### Initialize the FJdbc facade
 ```java
 final Supplier<Connection> cnxSupplier = () -> {
-  try {
-	  return DriverManager.getConnection("jdbc-url", "user", "password");
+	try {
+		return DriverManager.getConnection("jdbc-url", "user", "password");
 	} catch (final Exception e) {
 		throw new RuntimeException(e);
 	}
 };
-		final FJdbc fjdbc = new FJdbc(cnxSupplier);
+final FJdbc fjdbc = new FJdbc(cnxSupplier);
 ```
 
 ### Query the database
 ```java
 final SingleRowExtractor<String> extractor = (rs) -> rs.getString(1);
-final List<String> list = fjdbc.query("select utl_codutl from wfa_utl", extractor).toList();
-System.out.println(list);
+final List<String> names = fjdbc.query("select name from user", extractor).toList();
+System.out.println(names);
 ```
 
 ### Query the database using a prepared statement
 ```java
-final String sql = "select utl_codutl from wfa_utl where utl_isadm = ?";
-final PreparedStatementBinder binder = (ps) -> ps.setString(1, "n");
+final String sql = "select name from user where role = ?";
+final PreparedStatementBinder binder = (ps) -> ps.setString(1, "grunt");
 final SingleRowExtractor<String> extractor = rs -> rs.getString(1);
-final List<String> list = fjdbc.query(sql, binder, extractor).toList();
-System.out.println(list);
+final List<String> names = fjdbc.query(sql, binder, extractor).toList();
+System.out.println(names);
 ```
 
 ### Execute a statement (update, delete, insert, etc)
