@@ -35,7 +35,7 @@ System.out.println(names);
 ### Execute a statement (update, delete, insert, etc)
 ```java
 final int nRows = fjdbc.exec("update user set name='jack' where name='henri'");
-System.out.println(nRows);
+System.out.println(nRows + " rows changed");
 ```
 
 ### Execute a prepared statement
@@ -45,7 +45,7 @@ final PreparedStatementBinder binder = (ps) -> {
 	ps.setString(2, "henri");
 };
 final int nRows = fjdbc.exec("update user set name=? where name=?", binder);
-System.out.println(nRows);
+System.out.println(nRows + " rows changed");
 ```
 
 ### Execute a sequence of statements (in a single transaction)
@@ -62,4 +62,5 @@ ps.setString(1, "manager");
 final Op deleteManagers = new FPreparedStatement("delete from user where role=?", binder2);
 
 final int nRows = fjdbc.exec(updateName, deleteManagers);
+System.out.println(nRows + " rows changed");
 ```
