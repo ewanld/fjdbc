@@ -13,10 +13,10 @@ import com.github.fjdbc.util.FjdbcUtil;
 /**
  * Wraps a {@link java.sql.Statement}.
  */
-public class FStatement implements Op {
+public class StatementOp implements Op {
 	private final String sql;
 
-	public FStatement(String sql) {
+	public StatementOp(String sql) {
 		assert sql != null;
 		this.sql = sql;
 	}
@@ -29,8 +29,9 @@ public class FStatement implements Op {
 			st = cnx.createStatement();
 			final int modifiedRows = st.executeUpdate(sql);
 			return modifiedRows;
-		} finally {
+		} catch(final SQLException e) {
 			FjdbcUtil.close(cnx, st);
+			throw new FjdbcException(e);
 		}
 	}
 

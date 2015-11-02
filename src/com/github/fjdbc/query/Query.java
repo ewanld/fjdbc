@@ -1,50 +1,46 @@
 package com.github.fjdbc.query;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.github.fjdbc.FjdbcException;
-import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.Consumers;
 import com.github.fjdbc.util.FjdbcUtil;
 
-public class FPreparedQuery<T> {
+public class Query<T> {
 	private final String sql;
-	private final PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
 	private final Supplier<Connection> cnxSupplier;
 
-	public FPreparedQuery(Supplier<Connection> cnxSupplier, String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
+	public Query(Supplier<Connection> cnxSupplier, String sql, ResultSetExtractor<T> extractor) {
 		assert cnxSupplier != null;
 		assert sql != null;
-		assert binder != null;
 		assert extractor != null;
 		
 		this.cnxSupplier = cnxSupplier;
 		this.sql = sql;
-		this.binder = binder;
 		this.extractor = extractor;
 	}
 
 	public void forEach(Consumer<? super T> callback) {
-		PreparedStatement ps = null;
+		ResultSet rs = null;
+		Statement st = null;
 		Connection cnx = null;
 		try {
 			cnx = cnxSupplier.get();
-			ps = cnx.prepareStatement(sql);
-			binder.bind(ps);
-			final ResultSet resultSet = ps.executeQuery();
-			extractor.extractAll(resultSet, callback);
+			st = cnx.createStatement();
+			rs = st.executeQuery(sql);
+			extractor.extractAll(rs, callback);
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
 		} finally {
-			FjdbcUtil.close(cnx, ps);
+			FjdbcUtil.close(cnx, st, rs);
 		}
 	}
 

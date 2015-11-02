@@ -4,14 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * The {@link #bind} method should only call the setXXX methods of the prepared statement.
+ * Represent a function that binds values to a prepared statement.
  */
 @FunctionalInterface
-public interface PreparedStatementBinder extends  IPreparedStatementBinder {
-	@Override
-	default int execute(PreparedStatement ps) throws SQLException {
-		final int modifiedRows = ps.executeUpdate();
-		return modifiedRows;
-	}
-
+public interface PreparedStatementBinder {
+	void bind(PreparedStatement ps) throws SQLException;
 }
