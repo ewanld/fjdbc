@@ -23,6 +23,10 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+/**
+ * Delegate of the class java.sql.PreparedStatement. Also, keeps track if the
+ * statement is a batch statement or a single statement.
+ */
 class PreparedStatementDelegate implements PreparedStatement {
 	private final PreparedStatement ps;
 	private boolean isBatch = false;

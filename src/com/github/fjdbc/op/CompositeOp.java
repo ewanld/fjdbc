@@ -12,16 +12,16 @@ import com.github.fjdbc.util.FjdbcUtil;
 /**
  * Represents a sequence of statements that must be executed in a single transaction.
  */
-public class CompositeOp implements Op {
-	private final Op[] operations;
+public class CompositeOp implements DbOp {
+	private final DbOp[] operations;
 	public static Logger logger = Logger.getLogger(CompositeOp.class.getName());
 
-	public CompositeOp(Op... operations) {
+	public CompositeOp(DbOp... operations) {
 		this.operations = operations;
 	}
 
-	public CompositeOp(Collection<Op> operations) {
-		this.operations = operations.toArray(new Op[0]);
+	public CompositeOp(Collection<DbOp> operations) {
+		this.operations = operations.toArray(new DbOp[0]);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class CompositeOp implements Op {
 	public int execute(Connection cnx) throws SQLException {
 		int modifiedRows = 0;
 		for (int i = 0; i < operations.length; i++) {
-			final Op t = operations[i];
+			final DbOp t = operations[i];
 			try {
 				modifiedRows += t.execute(cnx);
 			} catch (final Exception e) {

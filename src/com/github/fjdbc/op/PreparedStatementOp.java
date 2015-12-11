@@ -12,7 +12,7 @@ import com.github.fjdbc.util.FjdbcUtil;
 /**
  * Wraps a {@link java.sql.PreparedStatement}.
  */
-public class PreparedStatementOp implements Op {
+public class PreparedStatementOp implements DbOp {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 
@@ -27,11 +27,11 @@ public class PreparedStatementOp implements Op {
 		PreparedStatement ps = null;
 		try {
 			ps = cnx.prepareStatement(sql);
-			final PreparedStatementDelegate settablePs = new PreparedStatementDelegate(ps);
-			binder.bind(settablePs);
-			if (settablePs.isBatch()) {
-				final int[] modifiedRows = ps.executeBatch();
-				return getNRowsModifiedByBatch(modifiedRows);
+			final PreparedStatementDelegate psDelegate = new PreparedStatementDelegate(ps);
+			binder.bind(psDelegate);
+			if (psDelegate.isBatch()) {
+				final int[] nRows = ps.executeBatch();
+				return getNRowsModifiedByBatch(nRows);
 			} else {
 				final int nRows = ps.executeUpdate();
 				return nRows;

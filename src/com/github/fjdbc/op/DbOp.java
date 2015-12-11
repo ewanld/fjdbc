@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 /**
  * Interface for representing statements and prepared statements.
  */
-public interface Op {
+public interface DbOp {
 	/**
 	 * Execute the operation, leaving the connection open.
 	 */

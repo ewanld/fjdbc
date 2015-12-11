@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 /**
  * A statement that does nothing.
  */
-public class NoOp implements Op {
+public class NoOp implements DbOp {
 
 	@Override
 	public int execute(Connection cnx) throws SQLException {

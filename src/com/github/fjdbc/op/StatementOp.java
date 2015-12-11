@@ -13,7 +13,7 @@ import com.github.fjdbc.util.FjdbcUtil;
 /**
  * Wraps a {@link java.sql.Statement}.
  */
-public class StatementOp implements Op {
+public class StatementOp implements DbOp {
 	private final String sql;
 
 	public StatementOp(String sql) {
