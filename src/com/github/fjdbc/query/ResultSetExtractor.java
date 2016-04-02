@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 /**
  * Extract objects from a ResultSet. The object may map to one or many rows from the result set.
  */
+@FunctionalInterface
 public interface ResultSetExtractor<T> {
 	void extractAll(ResultSet rs, Consumer<? super T> callback) throws SQLException;
 }

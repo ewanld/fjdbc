@@ -10,19 +10,12 @@ import java.util.function.Consumer;
 @FunctionalInterface
 public interface SingleRowExtractor<T> extends ResultSetExtractor<T> {
 
-	T extract(ResultSetView rs) throws SQLException;
-
-	/**
-	 * Convenience method.
-	 */
-	default T extract(ResultSet rs) throws SQLException {
-		return extract(new ResultSetView(rs));
-	}
+	public abstract T extract(ResultSet rs) throws SQLException;
 
 	@Override
 	public default void extractAll(ResultSet rs, Consumer<? super T> callback) throws SQLException {
 		while (rs.next()) {
-			final T object = extract(new ResultSetView(rs));
+			final T object = extract(rs);
 			callback.accept(object);
 		}
 	}

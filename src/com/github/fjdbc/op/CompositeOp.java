@@ -21,7 +21,7 @@ public class CompositeOp implements DbOp {
 	}
 
 	public CompositeOp(Collection<DbOp> operations) {
-		this.operations = operations.toArray(new DbOp[0]);
+		this(operations.toArray(new DbOp[0]));
 	}
 
 	@Override

@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
@@ -18,15 +17,15 @@ public class PreparedQuery<T> {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
-	private final Supplier<Connection> cnxSupplier;
+	private final Connection cnx;
 
-	public PreparedQuery(Supplier<Connection> cnxSupplier, String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
-		assert cnxSupplier != null;
+	public PreparedQuery(Connection cnx, String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
+		assert cnx != null;
 		assert sql != null;
 		assert binder != null;
 		assert extractor != null;
 		
-		this.cnxSupplier = cnxSupplier;
+		this.cnx = cnx;
 		this.sql = sql;
 		this.binder = binder;
 		this.extractor = extractor;
@@ -34,9 +33,7 @@ public class PreparedQuery<T> {
 
 	public void forEach(Consumer<? super T> callback) {
 		PreparedStatement ps = null;
-		Connection cnx = null;
 		try {
-			cnx = cnxSupplier.get();
 			ps = cnx.prepareStatement(sql);
 			binder.bind(ps);
 			final ResultSet resultSet = ps.executeQuery();
@@ -44,7 +41,7 @@ public class PreparedQuery<T> {
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
 		} finally {
-			FjdbcUtil.close(cnx, ps);
+			FjdbcUtil.close(ps);
 		}
 	}
 

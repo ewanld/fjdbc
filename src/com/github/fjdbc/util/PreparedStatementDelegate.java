@@ -1,4 +1,4 @@
-package com.github.fjdbc.op;
+package com.github.fjdbc.util;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -27,9 +27,8 @@ import java.util.Calendar;
  * Delegate of the class java.sql.PreparedStatement. Also, keeps track if the
  * statement is a batch statement or a single statement.
  */
-class PreparedStatementDelegate implements PreparedStatement {
-	private final PreparedStatement ps;
-	private boolean isBatch = false;
+public class PreparedStatementDelegate implements PreparedStatement {
+	protected final PreparedStatement ps;
 
 	public PreparedStatementDelegate(PreparedStatement ps) {
 		this.ps = ps;
@@ -38,27 +37,17 @@ class PreparedStatementDelegate implements PreparedStatement {
 	@Override
 	public void addBatch(String sql) throws SQLException {
 		ps.addBatch(sql);
-		isBatch = true;
 	}
 
 	@Override
 	public void addBatch() throws SQLException {
 		ps.addBatch();
-		isBatch = true;
 	}
 
 	@Override
 	public void clearBatch() throws SQLException {
 		ps.clearBatch();
-		isBatch = false;
 	}
-
-	public boolean isBatch() {
-		return isBatch;
-	}
-
-	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	// Only trivial delegate methods beyond this point
 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {

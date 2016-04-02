@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.FjdbcUtil;
+import com.github.fjdbc.util.PreparedStatementEx;
 
 /**
  * Wraps a {@link java.sql.PreparedStatement}.
@@ -27,9 +28,9 @@ public class PreparedStatementOp implements DbOp {
 		PreparedStatement ps = null;
 		try {
 			ps = cnx.prepareStatement(sql);
-			final PreparedStatementDelegate psDelegate = new PreparedStatementDelegate(ps);
-			binder.bind(psDelegate);
-			if (psDelegate.isBatch()) {
+			final PreparedStatementEx psx = new PreparedStatementEx(ps);
+			binder.bind(psx);
+			if (psx.isBatch()) {
 				final int[] nRows = ps.executeBatch();
 				return getNRowsModifiedByBatch(nRows);
 			} else {

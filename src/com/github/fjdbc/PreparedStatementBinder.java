@@ -8,5 +8,9 @@ import java.sql.SQLException;
  */
 @FunctionalInterface
 public interface PreparedStatementBinder {
-	void bind(PreparedStatement ps) throws SQLException;
+	void bind(PreparedStatement st, Sequence paramIndex) throws SQLException;
+	
+	public default void bind(PreparedStatement st) throws SQLException {
+		bind(st, new Sequence(1));
+	}
 }
