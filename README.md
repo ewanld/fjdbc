@@ -4,22 +4,10 @@ Functional wrapper for the JDBC API.
 Requires Java >= 8.
 
 ## Examples
-### Initialize the FJdbc facade
-```java
-final Supplier<Connection> cnxSupplier = () -> {
-	try {
-		return DriverManager.getConnection("jdbc-url", "user", "password");
-	} catch (final Exception e) {
-		throw new RuntimeException(e);
-	}
-};
-final FJdbc fjdbc = new FJdbc(cnxSupplier);
-```
-
 ### Query the database
 ```java
-final SingleRowExtractor<String> extractor = (rs) -> rs.getString(1);
-final List<String> names = fjdbc.query("select name from user", extractor).toList();
+final ResultSetExtractor<String> extractor = (rs) -> rs.getString(1);
+final List<String> names = new PreparedQuery<>("select name from user", extractor).toList();
 System.out.println(names);
 ```
 
