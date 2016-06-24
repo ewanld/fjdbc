@@ -1,7 +1,5 @@
 package com.github.fjdbc.op;
 
-import static com.github.fjdbc.util.FjdbcUtil.*;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,8 +26,8 @@ public class StatementOp implements DbOp {
 			st = cnx.createStatement();
 			final int modifiedRows = st.executeUpdate(sql);
 			return modifiedRows;
-		} catch(final SQLException e) {
-			FjdbcUtil.close(cnx, st);
+		} catch (final SQLException e) {
+			FjdbcUtil.close(st);
 			throw new FjdbcException(e);
 		}
 	}
@@ -42,7 +40,7 @@ public class StatementOp implements DbOp {
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
 		} finally {
-			close(cnx);
+			FjdbcUtil.closeConnection(cnx);
 		}
 	}
 }

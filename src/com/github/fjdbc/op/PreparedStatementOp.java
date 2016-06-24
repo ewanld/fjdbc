@@ -36,7 +36,7 @@ public class PreparedStatementOp implements DbOp {
 				final int nRows = ps.executeUpdate();
 				return nRows;
 			}
-		} catch(final SQLException e) {
+		} catch (final SQLException e) {
 			FjdbcUtil.close(ps);
 			throw new FjdbcException(e);
 		}
@@ -47,7 +47,7 @@ public class PreparedStatementOp implements DbOp {
 		for (final int r : modifiedRows) {
 			if (r == PreparedStatement.SUCCESS_NO_INFO) {
 				return PreparedStatement.SUCCESS_NO_INFO;
-			} else if (r== PreparedStatement.EXECUTE_FAILED) {
+			} else if (r == PreparedStatement.EXECUTE_FAILED) {
 				return PreparedStatement.EXECUTE_FAILED;
 			} else {
 				sum += r;
