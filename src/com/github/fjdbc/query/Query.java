@@ -18,13 +18,13 @@ import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.Consumers;
 import com.github.fjdbc.util.FjdbcUtil;
 
-public class PreparedQuery<T> {
+public class Query<T> {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
 	private final Connection cnx;
 
-	public PreparedQuery(Connection cnx, String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
+	public Query(Connection cnx, String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
 		assert cnx != null;
 		assert sql != null;
 		assert extractor != null;
@@ -35,7 +35,7 @@ public class PreparedQuery<T> {
 		this.extractor = extractor;
 	}
 
-	public PreparedQuery(Connection cnx, String sql, ResultSetExtractor<T> extractor) {
+	public Query(Connection cnx, String sql, ResultSetExtractor<T> extractor) {
 		this(cnx, sql, null, extractor);
 	}
 
