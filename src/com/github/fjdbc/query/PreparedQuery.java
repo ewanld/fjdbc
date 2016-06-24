@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -52,8 +51,7 @@ public class PreparedQuery<T> {
 
 	public Stream<T> stream() {
 		ResultSet rs = null;
-		final PreparedStatement ps = FjdbcUtil.prepareStatement(cnx, sql);
-		try {
+		try (PreparedStatement ps = cnx.prepareStatement(sql)) {
 			binder.bind(ps);
 			rs = ps.executeQuery();
 			final Stream<T> res = StreamSupport
@@ -61,8 +59,7 @@ public class PreparedQuery<T> {
 			res.onClose(() -> FjdbcUtil.close(ps));
 			return res;
 		} catch (final SQLException e) {
-			FjdbcUtil.close(null, ps, rs);
-			throw new RuntimeException(e);
+			throw new FjdbcException(e);
 		}
 	}
 
