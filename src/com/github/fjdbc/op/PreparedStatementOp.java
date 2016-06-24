@@ -3,7 +3,6 @@ package com.github.fjdbc.op;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.function.Supplier;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
@@ -58,10 +57,8 @@ public class PreparedStatementOp implements DbOp {
 	}
 
 	@Override
-	public int executeAndCommit(Supplier<Connection> cnxSupplier) {
-		Connection cnx = null;
+	public int executeAndCommit(Connection cnx) {
 		try {
-			cnx = cnxSupplier.get();
 			final int modifiedRows = execute(cnx);
 			return modifiedRows;
 		} catch (final SQLException e) {

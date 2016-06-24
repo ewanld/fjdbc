@@ -6,7 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
@@ -24,7 +29,7 @@ public class PreparedQuery<T> {
 		assert sql != null;
 		assert binder != null;
 		assert extractor != null;
-		
+
 		this.cnx = cnx;
 		this.sql = sql;
 		this.binder = binder;
@@ -42,6 +47,22 @@ public class PreparedQuery<T> {
 			throw new FjdbcException(e);
 		} finally {
 			FjdbcUtil.close(ps);
+		}
+	}
+
+	public Stream<T> stream() {
+		ResultSet rs = null;
+		final PreparedStatement ps = FjdbcUtil.prepareStatement(cnx, sql);
+		try {
+			binder.bind(ps);
+			rs = ps.executeQuery();
+			final Stream<T> res = StreamSupport
+					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
+			res.onClose(() -> FjdbcUtil.close(ps));
+			return res;
+		} catch (final SQLException e) {
+			FjdbcUtil.close(null, ps, rs);
+			throw new RuntimeException(e);
 		}
 	}
 

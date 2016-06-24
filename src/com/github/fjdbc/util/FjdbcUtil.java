@@ -1,6 +1,7 @@
 package com.github.fjdbc.util;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,8 +14,10 @@ import com.github.fjdbc.FjdbcException;
 public class FjdbcUtil {
 	public static void close(Connection cnx, Statement st, ResultSet rs) throws FjdbcException {
 		try {
-			if (rs != null) rs.close();
-			if (st != null) st.close();
+			if (rs != null)
+				rs.close();
+			if (st != null)
+				st.close();
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
 		} finally {
@@ -22,14 +25,26 @@ public class FjdbcUtil {
 		}
 	}
 
+	public static PreparedStatement prepareStatement(Connection cnx, String sql) {
+		PreparedStatement ps = null;
+		try {
+			ps = cnx.prepareStatement(sql);
+			return ps;
+		} catch (final SQLException e) {
+			FjdbcUtil.close(ps);
+			throw new FjdbcException(e);
+		}
+	}
+
 	public static void close(Statement st) {
 		close(null, st);
 	}
-	
+
 	public static void close(Connection cnx, Statement... statements) {
 		try {
 			for (final Statement st : statements) {
-				if (st != null) st.close();
+				if (st != null)
+					st.close();
 			}
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
@@ -39,10 +54,12 @@ public class FjdbcUtil {
 	}
 
 	public static void closeConnection(Connection cnx) {
-		if (cnx != null) try {
-			cnx.close();
-		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+		if (cnx != null) {
+			try {
+				cnx.close();
+			} catch (final SQLException e) {
+				throw new FjdbcException(e);
+			}
 		}
 	}
 

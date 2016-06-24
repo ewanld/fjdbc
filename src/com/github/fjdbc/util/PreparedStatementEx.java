@@ -1,15 +1,23 @@
 package com.github.fjdbc.util;
 
+import java.math.BigDecimal;
+import java.net.URL;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Ref;
 import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * Keeps track if the statement is a batch statement or a single statement.
  */
 public class PreparedStatementEx extends PreparedStatementDelegate {
 	private boolean isBatch = false;
-	
+
 	public PreparedStatementEx(PreparedStatement ps) {
 		super(ps);
 	}
@@ -35,10 +43,43 @@ public class PreparedStatementEx extends PreparedStatementDelegate {
 	public boolean isBatch() {
 		return isBatch;
 	}
-	
-	public void setInt(int index, Integer value) throws SQLException {
-		if (value == null) ps.setNull(index, Types.INTEGER);
-		else setInt(index, value.intValue());
+
+	public <T> void setAnyObject(int columnIndex, Object o, Class<T> type) throws SQLException {
+		if (o == null) {
+			ps.setNull(columnIndex, java.sql.Types.OTHER);
+		} else if (type.equals(String.class)) {
+			ps.setString(columnIndex, (String) o);
+		} else if (type.equals(BigDecimal.class)) {
+			ps.setBigDecimal(columnIndex, (BigDecimal) o);
+		} else if (type.equals(Boolean.class)) {
+			ps.setBoolean(columnIndex, (Boolean) o);
+		} else if (type.equals(Integer.class)) {
+			ps.setInt(columnIndex, (Integer) o);
+		} else if (type.equals(Long.class)) {
+			ps.setLong(columnIndex, (Long) o);
+		} else if (type.equals(Float.class)) {
+			ps.setFloat(columnIndex, (Float) o);
+		} else if (type.equals(Double.class)) {
+			ps.setDouble(columnIndex, (Double) o);
+		} else if (type.equals(byte[].class)) {
+			ps.setBytes(columnIndex, (byte[]) o);
+		} else if (type.equals(java.sql.Date.class)) {
+			ps.setDate(columnIndex, (Date) o);
+		} else if (type.equals(Time.class)) {
+			ps.setTime(columnIndex, (Time) o);
+		} else if (type.equals(Timestamp.class)) {
+			ps.setTimestamp(columnIndex, (Timestamp) o);
+		} else if (type.equals(Clob.class)) {
+			ps.setClob(columnIndex, (Clob) o);
+		} else if (type.equals(Blob.class)) {
+			ps.setBlob(columnIndex, (Blob) o);
+		} else if (type.equals(Array.class)) {
+			ps.setArray(columnIndex, (Array) o);
+		} else if (type.equals(Ref.class)) {
+			ps.setRef(columnIndex, (Ref) o);
+		} else if (type.equals(URL.class)) {
+			ps.setURL(columnIndex, (URL) o);
+		}
 	}
 
 }

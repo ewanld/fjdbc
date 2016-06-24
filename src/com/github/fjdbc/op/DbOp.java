@@ -2,7 +2,6 @@ package com.github.fjdbc.op;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.function.Supplier;
 
 /**
  * Interface for representing statements and prepared statements.
@@ -16,11 +15,10 @@ public interface DbOp {
 	/**
 	 * Executes the following steps:
 	 * <ul>
-	 * <li>Acquire a connection from the supplier.
 	 * <li>execute the operation.
 	 * <li>commit.
-	 * <li>close the connection.
+	 * <li>In case of exception, rollback.
 	 * </ul>
 	 */
-	public int executeAndCommit(Supplier<Connection> cnxSupplier);
+	public int executeAndCommit(Connection cnx);
 }

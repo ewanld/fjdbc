@@ -3,14 +3,16 @@ package com.github.fjdbc;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import com.github.fjdbc.util.IntSequence;
+
 /**
  * Represent a function that binds values to a prepared statement.
  */
 @FunctionalInterface
 public interface PreparedStatementBinder {
-	void bind(PreparedStatement st, Sequence paramIndex) throws SQLException;
+	void bind(PreparedStatement st, IntSequence paramIndex) throws SQLException;
 	
 	public default void bind(PreparedStatement st) throws SQLException {
-		bind(st, new Sequence(1));
+		bind(st, new IntSequence(1));
 	}
 }

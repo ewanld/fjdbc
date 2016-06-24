@@ -1,11 +1,10 @@
 package com.github.fjdbc.op;
 
-import static com.github.fjdbc.util.FjdbcUtil.close;
+import static com.github.fjdbc.util.FjdbcUtil.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.function.Supplier;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.util.FjdbcUtil;
@@ -36,10 +35,8 @@ public class StatementOp implements DbOp {
 	}
 
 	@Override
-	public int executeAndCommit(Supplier<Connection> cnxSupplier) {
-		Connection cnx = null;
+	public int executeAndCommit(Connection cnx) {
 		try {
-			cnx = cnxSupplier.get();
 			final int modifiedRows = execute(cnx);
 			return modifiedRows;
 		} catch (final SQLException e) {
