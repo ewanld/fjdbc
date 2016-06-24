@@ -13,11 +13,11 @@ import com.github.fjdbc.util.PreparedStatementEx;
 /**
  * Wraps a {@link java.sql.PreparedStatement}.
  */
-public class PreparedStatementOp implements DbOp {
+public class StatementOp implements DbOp {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 
-	public PreparedStatementOp(String sql, PreparedStatementBinder binder) {
+	public StatementOp(String sql, PreparedStatementBinder binder) {
 		assert sql != null;
 
 		this.sql = sql;
