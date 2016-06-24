@@ -28,9 +28,9 @@ System.out.println(nRows + " rows changed");
 
 ### Execute a prepared statement
 ```java
-final PreparedStatementBinder binder = (ps) -> {
-	ps.setString(1, "jack");
-	ps.setString(2, "henri");
+final PreparedStatementBinder binder = (ps, paramIndex) -> {
+	ps.setString(paramIndex.next(), "jack");
+	ps.setString(paramIndex.next(), "henri");
 };
 final int nRows = fjdbc.exec("update user set name=? where name=?", binder);
 System.out.println(nRows + " rows changed");
@@ -38,14 +38,14 @@ System.out.println(nRows + " rows changed");
 
 ### Execute a sequence of statements (in a single transaction)
 ```java
-final PreparedStatementBinder binder = (ps) -> {
-	ps.setString(1, "jack");
-	ps.setString(2, "henri");
+final PreparedStatementBinder binder = (ps, paramIndex) -> {
+	ps.setString(paramIndex.next(), "jack");
+	ps.setString(paramIndex.next(), "henri");
 };
 final Op updateName = new FPreparedStatement("update user set name=? where name=?", binder);
 
-final PreparedStatementBinder binder2 = (ps) -> {
-ps.setString(1, "manager");
+final PreparedStatementBinder binder2 = (ps, paramIndex) -> {
+	ps.setString(paramIndex.next(), "manager");
 };
 final Op deleteManagers = new FPreparedStatement("delete from user where role=?", binder2);
 
