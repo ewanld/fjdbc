@@ -3,6 +3,7 @@ package com.github.fjdbc.op;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
@@ -17,28 +18,40 @@ public class PreparedStatementOp implements DbOp {
 	private final PreparedStatementBinder binder;
 
 	public PreparedStatementOp(String sql, PreparedStatementBinder binder) {
+		assert sql != null;
+
 		this.sql = sql;
 		this.binder = binder;
+	}
+
+	private boolean isPrepared() {
+		return binder != null;
 	}
 
 	@Override
 	public int execute(Connection cnx) throws SQLException {
 		assert cnx != null;
-		PreparedStatement ps = null;
-		try {
-			ps = cnx.prepareStatement(sql);
+		return isPrepared() ? execute_preparedStatement(cnx) : execute_regularStatement(cnx);
+	}
+
+	private int execute_regularStatement(Connection cnx) throws SQLException {
+		try (Statement st = cnx.createStatement()) {
+			final int modifiedRows = st.executeUpdate(sql);
+			return modifiedRows;
+		}
+	}
+
+	private int execute_preparedStatement(Connection cnx) throws SQLException {
+		try (PreparedStatement ps = cnx.prepareStatement(sql)) {
 			final PreparedStatementEx psx = new PreparedStatementEx(ps);
 			binder.bind(psx);
 			if (psx.isBatch()) {
 				final int[] nRows = ps.executeBatch();
 				return getNRowsModifiedByBatch(nRows);
 			} else {
-				final int nRows = ps.executeUpdate();
+				final int nRows = psx.executeUpdate();
 				return nRows;
 			}
-		} catch (final SQLException e) {
-			FjdbcUtil.close(ps);
-			throw new FjdbcException(e);
 		}
 	}
 
