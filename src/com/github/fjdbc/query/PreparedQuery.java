@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
@@ -26,7 +27,6 @@ public class PreparedQuery<T> {
 	public PreparedQuery(Connection cnx, String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
 		assert cnx != null;
 		assert sql != null;
-		assert binder != null;
 		assert extractor != null;
 
 		this.cnx = cnx;
@@ -35,17 +35,25 @@ public class PreparedQuery<T> {
 		this.extractor = extractor;
 	}
 
+	public PreparedQuery(Connection cnx, String sql, ResultSetExtractor<T> extractor) {
+		this(cnx, sql, null, extractor);
+	}
+
+	private boolean isPrepared() {
+		return binder != null;
+	}
+
 	public void forEach(Consumer<? super T> callback) {
-		PreparedStatement ps = null;
+		Statement st = null;
 		try {
-			ps = cnx.prepareStatement(sql);
-			binder.bind(ps);
-			final ResultSet resultSet = ps.executeQuery();
+			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
+			if (isPrepared()) binder.bind((PreparedStatement) st);
+			final ResultSet resultSet = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
 			extractor.extractAll(resultSet, callback);
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
 		} finally {
-			FjdbcUtil.close(ps);
+			FjdbcUtil.close(st);
 		}
 	}
 
