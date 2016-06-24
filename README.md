@@ -8,7 +8,7 @@ Requires Java >= 8.
 ```java
 final String sql = "select name from user";
 final ResultSetExtractor<String> extractor = (rs) -> rs.getString(1);
-final List<String> names = new PreparedQuery<>(connection, sql, extractor).toList();
+final List<String> names = new Query<>(connection, sql, extractor).toList();
 System.out.println(names);
 ```
 
@@ -17,7 +17,7 @@ System.out.println(names);
 final String sql = "select name from user where role = ?";
 final PreparedStatementBinder binder = (ps) -> ps.setString(1, "grunt");
 final SingleRowExtractor<String> extractor = rs -> rs.getString(1);
-final List<String> names = PreparedQuery<>(connection, sql, binder, extractor).toList();
+final List<String> names = Query<>(connection, sql, binder, extractor).toList();
 System.out.println(names);
 ```
 
@@ -35,7 +35,7 @@ final PreparedStatementBinder binder = (ps, paramIndex) -> {
 	ps.setString(paramIndex.next(), "jack");
 	ps.setString(paramIndex.next(), "henri");
 };
-final int nRows = new PreparedStatementOp(sql, binder).executeAndCommit(connection);
+final int nRows = new StatementOp(sql, binder).executeAndCommit(connection);
 System.out.println(nRows + " rows changed");
 ```
 
@@ -45,12 +45,12 @@ final PreparedStatementBinder binder = (ps, paramIndex) -> {
 	ps.setString(paramIndex.next(), "jack");
 	ps.setString(paramIndex.next(), "henri");
 };
-final Op updateName = new PreparedStatementOp("update user set name=? where name=?", binder);
+final Op updateName = new StatementOp("update user set name=? where name=?", binder);
 
 final PreparedStatementBinder binder2 = (ps, paramIndex) -> {
 	ps.setString(paramIndex.next(), "manager");
 };
-final Op deleteManagers = new PreparedStatementOp("delete from user where role=?", binder2);
+final Op deleteManagers = new StatementOp("delete from user where role=?", binder2);
 
 final int nRows = new CompositeOp(updateName, deleteManagers).executeAndCommit(connection);
 System.out.println(nRows + " rows changed");
