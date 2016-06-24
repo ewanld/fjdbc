@@ -1,5 +1,8 @@
 package com.github.fjdbc;
 
+/**
+ * Root class of all runtime exceptions thrown by fjdbc.
+ */
 public class FjdbcException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
