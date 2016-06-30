@@ -35,9 +35,8 @@ public interface ResultSetExtractor<T> {
 	}
 
 	/**
+	 * An iterator backed by a ResultSet. The ResultSet is closed when the last element is read.
 	 * 
-	 * @author a507831
-	 *
 	 * @param <T>
 	 */
 	public static class ResultSetIterator<T> implements Iterator<T> {
@@ -67,7 +66,7 @@ public interface ResultSetExtractor<T> {
 						return false;
 					}
 				}
-				final boolean hasNext = _hasNext && !rs.isAfterLast() && !rs.isClosed() && !rs.isLast();
+				final boolean hasNext = _hasNext && !rs.isLast() && !rs.isAfterLast() && !rs.isClosed();
 				if (!hasNext) FjdbcUtil.close(null, null, rs);
 				return hasNext;
 			} catch (final SQLException e) {
@@ -82,7 +81,6 @@ public interface ResultSetExtractor<T> {
 				final boolean next = rs.next();
 				nextCalled = true;
 				if (!next) {
-					FjdbcUtil.close(null, null, rs);
 					_hasNext = false;
 					return null;
 				}
