@@ -24,8 +24,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 /**
- * Delegate of the class java.sql.PreparedStatement. Also, keeps track if the
- * statement is a batch statement or a single statement.
+ * Delegate of the class java.sql.PreparedStatement.
  */
 public class PreparedStatementDelegate implements PreparedStatement {
 	protected final PreparedStatement ps;
