@@ -11,7 +11,7 @@ import com.github.fjdbc.util.FjdbcUtil;
 import com.github.fjdbc.util.PreparedStatementEx;
 
 /**
- * Wraps a {@link java.sql.PreparedStatement}.
+ * Wraps either a {@link java.sql.PreparedStatement} or a {@link java.sql.Statement}.
  */
 public class StatementOp implements DbOp {
 	private final String sql;
