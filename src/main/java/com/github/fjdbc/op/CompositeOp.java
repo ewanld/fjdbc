@@ -25,8 +25,7 @@ public class CompositeOp implements DbOp {
 
 	@Override
 	public int executeAndCommit(Connection cnx) {
-		if (operations.length == 0)
-			return 0;
+		if (operations.length == 0) return 0;
 
 		try {
 			final int modifiedRows = execute(cnx);
@@ -51,7 +50,6 @@ public class CompositeOp implements DbOp {
 			} catch (final Exception e) {
 				throw new FjdbcException("DB Operation " + (i + 1) + "/" + operations.length + " failed", e);
 			}
-
 		}
 		return modifiedRows;
 	}
