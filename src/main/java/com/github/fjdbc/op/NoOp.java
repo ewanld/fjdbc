@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * A statement that does nothing.
+ * An operation that does nothing.
  */
 public class NoOp implements DbOp {
 
