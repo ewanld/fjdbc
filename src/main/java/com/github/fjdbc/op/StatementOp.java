@@ -73,6 +73,7 @@ public class StatementOp implements DbOp {
 	public int executeAndCommit(Connection cnx) {
 		try {
 			final int modifiedRows = execute(cnx);
+			cnx.commit();
 			return modifiedRows;
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
