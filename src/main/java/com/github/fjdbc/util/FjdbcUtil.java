@@ -12,16 +12,11 @@ import com.github.fjdbc.FjdbcException;
  * Utility methods
  */
 public class FjdbcUtil {
-	public static void close(Connection cnx, Statement st, ResultSet rs) throws FjdbcException {
+	public static void close(ResultSet rs) throws FjdbcException {
 		try {
-			if (rs != null)
-				rs.close();
-			if (st != null)
-				st.close();
+			if (rs != null) rs.close();
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
-		} finally {
-			closeConnection(cnx);
 		}
 	}
 
@@ -43,8 +38,7 @@ public class FjdbcUtil {
 	public static void close(Connection cnx, Statement... statements) {
 		try {
 			for (final Statement st : statements) {
-				if (st != null)
-					st.close();
+				if (st != null) st.close();
 			}
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
