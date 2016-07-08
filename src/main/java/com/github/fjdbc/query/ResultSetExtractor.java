@@ -26,11 +26,7 @@ public interface ResultSetExtractor<T> {
 	public static class ResultSetIterator<T> implements Iterator<T> {
 		private final ResultSet rs;
 		private final ResultSetExtractor<T> extractor;
-		private boolean _hasNext = true;
-		/**
-		 * True if resultSet.next() has been called at least once, false otherwise.
-		 */
-		private boolean nextCalled = false;
+		private T nextValue;
 
 		public ResultSetIterator(ResultSet rs, ResultSetExtractor<T> extractor) {
 			this.rs = rs;
@@ -39,40 +35,33 @@ public interface ResultSetExtractor<T> {
 
 		@Override
 		public boolean hasNext() {
+			maybeReadNext();
+			return nextValue != null;
+		}
+
+		private void maybeReadNext() {
+			if (nextValue != null) return;
 			try {
-				// need to call next() at least once otherwise isLast doesn't work (MySql).
-				if (!nextCalled) {
-					final boolean next = rs.next();
-					nextCalled = true;
-					if (!next) {
-						FjdbcUtil.close(rs);
-						_hasNext = false;
-						return false;
-					}
+				final boolean next = rs.next();
+				if (!next) {
+					nextValue = null;
+					FjdbcUtil.close(rs);
+				} else {
+					nextValue = extractor.extract(rs);
 				}
-				final boolean hasNext = _hasNext && !rs.isLast() && !rs.isAfterLast() && !rs.isClosed();
-				if (!hasNext) FjdbcUtil.close(rs);
-				return hasNext;
 			} catch (final SQLException e) {
 				FjdbcUtil.close(rs);
 				throw new FjdbcException(e);
 			}
+
 		}
 
 		@Override
 		public T next() {
-			try {
-				final boolean next = rs.next();
-				nextCalled = true;
-				if (!next) {
-					_hasNext = false;
-					return null;
-				}
-				return extractor.extract(rs);
-			} catch (final SQLException e) {
-				FjdbcUtil.close(rs);
-				throw new FjdbcException(e);
-			}
+			maybeReadNext();
+			final T res = nextValue;
+			nextValue = null;
+			return res;
 		}
 
 	}
