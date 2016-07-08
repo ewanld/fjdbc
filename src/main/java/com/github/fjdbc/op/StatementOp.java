@@ -7,7 +7,6 @@ import java.sql.Statement;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
-import com.github.fjdbc.util.FjdbcUtil;
 import com.github.fjdbc.util.PreparedStatementEx;
 
 /**
