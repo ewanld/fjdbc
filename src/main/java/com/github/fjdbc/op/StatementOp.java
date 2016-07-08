@@ -77,8 +77,6 @@ public class StatementOp implements DbOp {
 			return modifiedRows;
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
-		} finally {
-			FjdbcUtil.closeConnection(cnx);
 		}
 	}
 }

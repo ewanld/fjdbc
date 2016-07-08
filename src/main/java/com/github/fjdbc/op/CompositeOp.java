@@ -35,8 +35,6 @@ public class CompositeOp implements DbOp {
 		} catch (final Exception e) {
 			FjdbcUtil.rollbackConnection(cnx);
 			throw new FjdbcException(e);
-		} finally {
-			FjdbcUtil.closeConnection(cnx);
 		}
 	}
 
