@@ -18,6 +18,18 @@ public interface ResultSetExtractor<T> {
 		return new ResultSetIterator<>(rs, this);
 	}
 
+	public static <T> ResultSetExtractor<T> singleColumn(String columnName, Class<T> type) {
+		return (rs) -> {
+			return rs.getObject(columnName, type);
+		};
+	}
+
+	public static <T> ResultSetExtractor<T> oneColumn(int columnIndex, Class<T> type) {
+		return (rs) -> {
+			return rs.getObject(columnIndex, type);
+		};
+	}
+
 	/**
 	 * An iterator backed by a ResultSet. The ResultSet is closed when the last element is read.
 	 * 
