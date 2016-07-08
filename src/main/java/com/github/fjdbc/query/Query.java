@@ -45,7 +45,7 @@ public class Query<T> {
 	/**
 	 * The returned stream must be closed manually by the caller.
 	 */
-	private Stream<T> stream() {
+	public Stream<T> stream() {
 		try {
 			final Statement st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st);
