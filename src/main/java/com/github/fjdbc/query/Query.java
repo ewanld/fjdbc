@@ -5,17 +5,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.function.Consumer;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
-import com.github.fjdbc.util.Consumers;
 import com.github.fjdbc.util.FjdbcUtil;
 
 public class Query<T> {
@@ -43,28 +42,17 @@ public class Query<T> {
 		return binder != null;
 	}
 
-	public void forEach(Consumer<? super T> callback) {
-		Statement st = null;
+	/**
+	 * The returned stream must be closed manually by the caller.
+	 */
+	private Stream<T> stream() {
 		try {
-			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
+			final Statement st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st);
-			final ResultSet resultSet = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
-			extractor.extractAll(resultSet, callback);
-		} catch (final SQLException e) {
-			throw new FjdbcException(e);
-		} finally {
-			FjdbcUtil.close(st);
-		}
-	}
-
-	public Stream<T> stream() {
-		ResultSet rs = null;
-		try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-			binder.bind(ps);
-			rs = ps.executeQuery();
+			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
 			final Stream<T> res = StreamSupport
 					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
-			res.onClose(() -> FjdbcUtil.close(ps));
+			res.onClose(() -> FjdbcUtil.close(st));
 			return res;
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
@@ -72,11 +60,19 @@ public class Query<T> {
 	}
 
 	/**
+	 * Convenience method.
+	 */
+	public <A, R> R collect(Collector<? super T, A, R> collector) {
+		try (Stream<T> s = stream()) {
+			final R res = s.collect(collector);
+			return res;
+		}
+	}
+
+	/**
 	 * Convenience method
 	 */
 	public List<T> toList() {
-		final List<T> res = new ArrayList<T>();
-		forEach(Consumers.toList(res));
-		return res;
+		return collect(Collectors.toList());
 	}
 }
