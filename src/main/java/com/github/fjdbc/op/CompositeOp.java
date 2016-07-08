@@ -3,7 +3,6 @@ package com.github.fjdbc.op;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.util.FjdbcUtil;
@@ -13,7 +12,6 @@ import com.github.fjdbc.util.FjdbcUtil;
  */
 public class CompositeOp implements DbOp {
 	private final DbOp[] operations;
-	public static Logger logger = Logger.getLogger(CompositeOp.class.getName());
 
 	public CompositeOp(DbOp... operations) {
 		this.operations = operations;
