@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Interface for representing statements and prepared statements.
+ * Represent a database operation that return a row count: insert, update, delete, etc.
  */
 public interface DbOp {
 	/**
 	 * Execute the operation, leaving the connection open.
+	 * 
+	 * @return The number of modified rows.
 	 */
 	public int execute(Connection cnx) throws SQLException;
 
@@ -19,6 +21,9 @@ public interface DbOp {
 	 * <li>commit.
 	 * <li>In case of exception, rollback.
 	 * </ul>
+	 * The connection is left open at the end.
+	 * 
+	 * @return The number of modified rows.
 	 */
 	public int executeAndCommit(Connection cnx);
 }

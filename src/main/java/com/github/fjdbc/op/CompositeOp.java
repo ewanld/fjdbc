@@ -9,7 +9,7 @@ import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.util.FjdbcUtil;
 
 /**
- * Represents a sequence of statements that must be executed in a single transaction.
+ * Represents a sequence of operations that must be executed in a single transaction.
  */
 public class CompositeOp implements DbOp {
 	private final DbOp[] operations;

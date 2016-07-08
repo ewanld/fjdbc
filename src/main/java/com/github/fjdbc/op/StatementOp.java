@@ -10,7 +10,8 @@ import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.PreparedStatementEx;
 
 /**
- * Wraps either a {@link java.sql.PreparedStatement} or a {@link java.sql.Statement}.
+ * Represent a database operation that return a row count: insert, update, delete, etc.<br>
+ * Supports prepared statements, and batch statements.
  */
 public class StatementOp implements DbOp {
 	private final String sql;
