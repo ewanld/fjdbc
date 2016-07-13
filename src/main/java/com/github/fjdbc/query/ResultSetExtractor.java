@@ -24,7 +24,7 @@ public interface ResultSetExtractor<T> {
 		};
 	}
 
-	public static <T> ResultSetExtractor<T> oneColumn(int columnIndex, Class<T> type) {
+	public static <T> ResultSetExtractor<T> singleColumn(int columnIndex, Class<T> type) {
 		return (rs) -> {
 			return rs.getObject(columnIndex, type);
 		};
