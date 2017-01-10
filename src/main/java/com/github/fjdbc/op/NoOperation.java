@@ -8,7 +8,7 @@ import com.github.fjdbc.ConnectionProvider;
 /**
  * An operation that does nothing.
  */
-public class NoOp implements DbOp {
+public class NoOperation implements DbOperation {
 
 	@Override
 	public int execute(Connection cnx) throws SQLException {

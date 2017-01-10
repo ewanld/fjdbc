@@ -8,7 +8,7 @@ import com.github.fjdbc.ConnectionProvider;
 /**
  * Represent a database operation that return a row count: insert, update, delete, etc.
  */
-public interface DbOp {
+public interface DbOperation {
 	/**
 	 * Execute the operation, leaving the connection open.
 	 * 

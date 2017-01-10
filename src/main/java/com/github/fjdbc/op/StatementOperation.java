@@ -14,15 +14,15 @@ import com.github.fjdbc.util.PreparedStatementEx;
  * Represent a database operation that return a row count: insert, update, delete, etc.<br>
  * Supports prepared statements, and batch statements.
  */
-public class StatementOp implements DbOp {
+public class StatementOperation implements DbOperation {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 
-	public StatementOp(String sql) {
+	public StatementOperation(String sql) {
 		this(sql, null);
 	}
 
-	public StatementOp(String sql, PreparedStatementBinder binder) {
+	public StatementOperation(String sql, PreparedStatementBinder binder) {
 		assert sql != null;
 
 		this.sql = sql;

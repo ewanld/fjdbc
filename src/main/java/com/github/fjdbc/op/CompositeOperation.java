@@ -10,15 +10,15 @@ import com.github.fjdbc.FjdbcException;
 /**
  * Represents a sequence of operations that must be executed in a single transaction.
  */
-public class CompositeOp implements DbOp {
-	private final DbOp[] operations;
+public class CompositeOperation implements DbOperation {
+	private final DbOperation[] operations;
 
-	public CompositeOp(DbOp... operations) {
+	public CompositeOperation(DbOperation... operations) {
 		this.operations = operations;
 	}
 
-	public CompositeOp(Collection<DbOp> operations) {
-		this(operations.toArray(new DbOp[0]));
+	public CompositeOperation(Collection<DbOperation> operations) {
+		this(operations.toArray(new DbOperation[0]));
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class CompositeOp implements DbOp {
 	public int execute(Connection cnx) throws SQLException {
 		int modifiedRows = 0;
 		for (int i = 0; i < operations.length; i++) {
-			final DbOp t = operations[i];
+			final DbOperation t = operations[i];
 			try {
 				modifiedRows += t.execute(cnx);
 			} catch (final Exception e) {
