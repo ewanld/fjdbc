@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.FjdbcUtil;
@@ -21,21 +22,22 @@ public class Query<T> {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
-	private final Connection cnx;
+	private ConnectionProvider cnxProvider;
 
-	public Query(Connection cnx, String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
-		assert cnx != null;
+	public Query(ConnectionProvider provider, String sql, PreparedStatementBinder binder,
+			ResultSetExtractor<T> extractor) {
+		assert provider != null;
 		assert sql != null;
 		assert extractor != null;
 
-		this.cnx = cnx;
+		this.cnxProvider = provider;
 		this.sql = sql;
 		this.binder = binder;
 		this.extractor = extractor;
 	}
 
-	public Query(Connection cnx, String sql, ResultSetExtractor<T> extractor) {
-		this(cnx, sql, null, extractor);
+	public Query(ConnectionProvider provider, String sql, ResultSetExtractor<T> extractor) {
+		this(provider, sql, null, extractor);
 	}
 
 	private boolean isPrepared() {
@@ -47,12 +49,16 @@ public class Query<T> {
 	 */
 	public Stream<T> stream() {
 		try {
+			final Connection cnx = cnxProvider.borrow();
 			final Statement st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st);
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
 			final Stream<T> res = StreamSupport
 					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
-			res.onClose(() -> FjdbcUtil.close(st));
+			res.onClose(() -> {
+				FjdbcUtil.close(st);
+				cnxProvider.giveBack();
+			});
 			return res;
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.PreparedStatementEx;
@@ -16,6 +17,10 @@ import com.github.fjdbc.util.PreparedStatementEx;
 public class StatementOp implements DbOp {
 	private final String sql;
 	private final PreparedStatementBinder binder;
+
+	public StatementOp(String sql) {
+		this(sql, null);
+	}
 
 	public StatementOp(String sql, PreparedStatementBinder binder) {
 		assert sql != null;
@@ -70,13 +75,15 @@ public class StatementOp implements DbOp {
 	}
 
 	@Override
-	public int executeAndCommit(Connection cnx) {
+	public int executeAndCommit(ConnectionProvider cnxProvider) {
 		try {
-			final int modifiedRows = execute(cnx);
-			cnx.commit();
+			final int modifiedRows = execute(cnxProvider.borrow());
+			cnxProvider.commit();
 			return modifiedRows;
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
+		} finally {
+			cnxProvider.giveBack();
 		}
 	}
 }

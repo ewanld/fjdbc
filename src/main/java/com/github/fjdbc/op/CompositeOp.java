@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.FjdbcException;
-import com.github.fjdbc.util.FjdbcUtil;
 
 /**
  * Represents a sequence of operations that must be executed in a single transaction.
@@ -22,17 +22,18 @@ public class CompositeOp implements DbOp {
 	}
 
 	@Override
-	public int executeAndCommit(Connection cnx) {
+	public int executeAndCommit(ConnectionProvider cnxProvider) {
 		if (operations.length == 0) return 0;
 
 		try {
-			final int modifiedRows = execute(cnx);
-			cnx.commit();
+			final int modifiedRows = execute(cnxProvider.borrow());
+			cnxProvider.commit();
 			return modifiedRows;
-
 		} catch (final Exception e) {
-			FjdbcUtil.rollbackConnection(cnx);
+			cnxProvider.rollback();
 			throw new FjdbcException(e);
+		} finally {
+			cnxProvider.giveBack();
 		}
 	}
 
