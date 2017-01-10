@@ -54,7 +54,7 @@ public class StatementOperation implements DbOperation {
 				final int[] nRows = ps.executeBatch();
 				return getNRowsModifiedByBatch(nRows);
 			} else {
-				final int nRows = psx.executeUpdate();
+				final int nRows = ps.executeUpdate();
 				return nRows;
 			}
 		}
