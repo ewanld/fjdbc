@@ -18,8 +18,8 @@ public class SingleConnectionProvider extends ConnectionProvider {
 	}
 
 	@Override
-	protected void doGiveBack(Connection cnx) {
-		FjdbcUtil.closeConnection(cnx);
+	protected void doGiveBack(Connection _cnx) {
+		FjdbcUtil.closeConnection(_cnx);
 	}
 
 }
