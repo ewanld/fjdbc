@@ -48,19 +48,24 @@ public class Query<T> {
 	 * The returned stream must be closed manually by the caller.
 	 */
 	public Stream<T> stream() {
+		Connection cnx = null;
+		Statement st = null;
 		try {
-			final Connection cnx = cnxProvider.borrow();
-			final Statement st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
+			cnx = cnxProvider.borrow();
+			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
+			final Statement st_final = st; // a final reference to the statement, to use in lambdas.
 			if (isPrepared()) binder.bind((PreparedStatement) st);
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
 			final Stream<T> res = StreamSupport
 					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
 			res.onClose(() -> {
-				FjdbcUtil.close(st);
+				FjdbcUtil.close(st_final);
 				cnxProvider.giveBack();
 			});
 			return res;
 		} catch (final SQLException e) {
+			FjdbcUtil.close(st);
+			cnxProvider.giveBack();
 			throw new FjdbcException(e);
 		}
 	}
