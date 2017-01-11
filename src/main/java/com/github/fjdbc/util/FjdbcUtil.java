@@ -48,16 +48,16 @@ public class FjdbcUtil {
 	}
 
 	public static void closeConnection(Connection cnx) {
-		if (cnx != null) {
-			try {
-				cnx.close();
-			} catch (final SQLException e) {
-				throw new FjdbcException(e);
-			}
+		if (cnx == null) return;
+		try {
+			cnx.close();
+		} catch (final SQLException e) {
+			throw new FjdbcException(e);
 		}
 	}
 
 	public static void rollbackConnection(Connection cnx) {
+		if (cnx == null) return;
 		try {
 			cnx.rollback();
 		} catch (final SQLException e) {
