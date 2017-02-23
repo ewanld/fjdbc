@@ -45,8 +45,10 @@ public class CompositeOperation implements DbOperation {
 			try {
 				modifiedRows += t.execute(cnx);
 			} catch (final Exception e) {
-				throw new FjdbcException("DB Operation " + (i + 1) + "/" + operations.length + " failed", e);
+				throw new FjdbcException(String.format("DB Operation %s/%s failed!", i + 1, operations.length),
+						e);
 			}
+
 		}
 		return modifiedRows;
 	}

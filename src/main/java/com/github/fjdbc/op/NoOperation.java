@@ -11,7 +11,7 @@ import com.github.fjdbc.ConnectionProvider;
 public class NoOperation implements DbOperation {
 
 	@Override
-	public int execute(Connection cnx) throws SQLException {
+	public int execute(Connection connection) throws SQLException {
 		return 0;
 	}
 

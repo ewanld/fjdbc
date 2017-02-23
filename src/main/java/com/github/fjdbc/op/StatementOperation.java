@@ -8,6 +8,7 @@ import java.sql.Statement;
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
+import com.github.fjdbc.util.IntSequence;
 import com.github.fjdbc.util.PreparedStatementEx;
 
 /**
@@ -49,7 +50,7 @@ public class StatementOperation implements DbOperation {
 	private int execute_preparedStatement(Connection cnx) throws SQLException {
 		try (PreparedStatement ps = cnx.prepareStatement(sql)) {
 			final PreparedStatementEx psx = new PreparedStatementEx(ps);
-			binder.bind(psx);
+			binder.bind(psx, new IntSequence(1));
 			if (psx.isBatch()) {
 				final int[] nRows = ps.executeBatch();
 				return getNRowsModifiedByBatch(nRows);
@@ -63,10 +64,10 @@ public class StatementOperation implements DbOperation {
 	private int getNRowsModifiedByBatch(int[] modifiedRows) {
 		int sum = 0;
 		for (final int r : modifiedRows) {
-			if (r == PreparedStatement.SUCCESS_NO_INFO) {
-				return PreparedStatement.SUCCESS_NO_INFO;
-			} else if (r == PreparedStatement.EXECUTE_FAILED) {
-				return PreparedStatement.EXECUTE_FAILED;
+			if (r == Statement.SUCCESS_NO_INFO) {
+				return Statement.SUCCESS_NO_INFO;
+			} else if (r == Statement.EXECUTE_FAILED) {
+				return Statement.EXECUTE_FAILED;
 			} else {
 				sum += r;
 			}

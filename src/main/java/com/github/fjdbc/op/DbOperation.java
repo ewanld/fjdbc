@@ -14,7 +14,7 @@ public interface DbOperation {
 	 * 
 	 * @return The number of modified rows.
 	 */
-	public int execute(Connection cnx) throws SQLException;
+	int execute(Connection connection) throws SQLException;
 
 	/**
 	 * Executes the following steps:
@@ -27,5 +27,5 @@ public interface DbOperation {
 	 * 
 	 * @return The number of modified rows.
 	 */
-	public int executeAndCommit(ConnectionProvider cnxProvider);
+	int executeAndCommit(ConnectionProvider cnxProvider);
 }

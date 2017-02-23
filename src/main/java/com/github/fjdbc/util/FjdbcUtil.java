@@ -56,6 +56,15 @@ public class FjdbcUtil {
 		}
 	}
 
+	public static void rollbackQuitely(Connection cnx) {
+		if (cnx == null) return;
+		try {
+			cnx.rollback();
+		} catch (final SQLException e) {
+			// do nothing
+		}
+	}
+
 	public static void rollbackConnection(Connection cnx) {
 		if (cnx == null) return;
 		try {
