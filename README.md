@@ -45,13 +45,13 @@ final PreparedStatementBinder binder = (ps, paramIndex) -> {
 	ps.setString(paramIndex.next(), "jack");
 	ps.setString(paramIndex.next(), "henri");
 };
-final Op updateName = new StatementOp("update user set name=? where name=?", binder);
+final DbOperation updateName = new StatementOperation("update user set name=? where name=?", binder);
 
 final PreparedStatementBinder binder2 = (ps, paramIndex) -> {
 	ps.setString(paramIndex.next(), "manager");
 };
-final Op deleteManagers = new StatementOp("delete from user where role=?", binder2);
+final DbOperation deleteManagers = new StatementOperation("delete from user where role=?", binder2);
 
-final int nRows = new CompositeOp(updateName, deleteManagers).executeAndCommit(connection);
+final int nRows = new CompositeOperation(updateName, deleteManagers).executeAndCommit(connection);
 System.out.println(nRows + " rows changed");
 ```
