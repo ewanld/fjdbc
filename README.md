@@ -24,7 +24,7 @@ System.out.println(names);
 ### Execute a statement (update, delete, insert, etc)
 ```java
 final String sql = "update user set name='jack' where name='henri'";
-final int nRows = new StatementOp(sql).executeAndCommit(connection);
+final int nRows = new StatementOperation(sql).executeAndCommit(connection);
 System.out.println(nRows + " rows changed");
 ```
 
