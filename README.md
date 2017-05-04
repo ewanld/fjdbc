@@ -35,7 +35,7 @@ final PreparedStatementBinder binder = (ps, paramIndex) -> {
 	ps.setString(paramIndex.next(), "jack");
 	ps.setString(paramIndex.next(), "henri");
 };
-final int nRows = new StatementOp(sql, binder).executeAndCommit(connection);
+final int nRows = new StatementOperation(sql, binder).executeAndCommit(connection);
 System.out.println(nRows + " rows changed");
 ```
 
