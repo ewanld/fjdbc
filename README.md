@@ -7,7 +7,7 @@ Requires Java >= 8.
 ### Query the database
 ```java
 final String sql = "select name from user";
-final ResultSetExtractor<String> extractor = (rs) -> rs.getString(1);
+final ResultSetExtractor<String> extractor = (rs) -> rs.getString("name");
 final List<String> names = new Query<>(connection, sql, extractor).toList();
 System.out.println(names);
 ```
@@ -16,7 +16,7 @@ System.out.println(names);
 ```java
 final String sql = "select name from user where role = ?";
 final PreparedStatementBinder binder = (ps) -> ps.setString(1, "grunt");
-final SingleRowExtractor<String> extractor = rs -> rs.getString(1);
+final SingleRowExtractor<String> extractor = rs -> rs.getString("name");
 final List<String> names = Query<>(connection, sql, binder, extractor).toList();
 System.out.println(names);
 ```
