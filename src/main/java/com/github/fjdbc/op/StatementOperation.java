@@ -85,8 +85,10 @@ public class StatementOperation implements DbOperation {
 			cnxProvider.commit();
 			return modifiedRows;
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new FjdbcException("Error executing the SQL statement: " + sql, e);
 		} finally {
+			// if the connection was already committed, roll back should be a no op.
+			cnxProvider.rollback();
 			cnxProvider.giveBack();
 		}
 	}

@@ -32,9 +32,11 @@ public class CompositeOperation implements DbOperation {
 			cnxProvider.commit();
 			return modifiedRows;
 		} catch (final Exception e) {
-			cnxProvider.rollback();
+			
 			throw new FjdbcException(e);
 		} finally {
+			// if the connection was already committed, roll back should be a no op.
+			cnxProvider.rollback();
 			cnxProvider.giveBack();
 		}
 	}
