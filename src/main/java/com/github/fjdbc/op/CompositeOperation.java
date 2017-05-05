@@ -12,17 +12,19 @@ import com.github.fjdbc.FjdbcException;
  */
 public class CompositeOperation implements DbOperation {
 	private final DbOperation[] operations;
+	private final ConnectionProvider cnxProvider;
 
-	public CompositeOperation(DbOperation... operations) {
+	public CompositeOperation(ConnectionProvider cnxProvider, DbOperation... operations) {
+		this.cnxProvider = cnxProvider;
 		this.operations = operations;
 	}
 
-	public CompositeOperation(Collection<? extends DbOperation> operations) {
-		this(operations.toArray(new DbOperation[0]));
+	public CompositeOperation(ConnectionProvider cnxProvider, Collection<? extends DbOperation> operations) {
+		this(cnxProvider, operations.toArray(new DbOperation[0]));
 	}
 
 	@Override
-	public int executeAndCommit(ConnectionProvider cnxProvider) {
+	public int executeAndCommit() {
 		if (operations.length == 0) return 0;
 
 		try {

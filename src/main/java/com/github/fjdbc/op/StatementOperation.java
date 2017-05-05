@@ -18,14 +18,17 @@ import com.github.fjdbc.util.PreparedStatementEx;
 public class StatementOperation implements DbOperation {
 	private final String sql;
 	private final PreparedStatementBinder binder;
+	private final ConnectionProvider cnxProvider;
 
-	public StatementOperation(String sql) {
-		this(sql, null);
+	public StatementOperation(ConnectionProvider cnxProvider, String sql) {
+		this(cnxProvider, sql, null);
 	}
 
-	public StatementOperation(String sql, PreparedStatementBinder binder) {
+	public StatementOperation(ConnectionProvider cnxProvider, String sql, PreparedStatementBinder binder) {
+		assert cnxProvider != null;
 		assert sql != null;
 
+		this.cnxProvider = cnxProvider;
 		this.sql = sql;
 		this.binder = binder;
 	}
@@ -76,7 +79,7 @@ public class StatementOperation implements DbOperation {
 	}
 
 	@Override
-	public int executeAndCommit(ConnectionProvider cnxProvider) {
+	public int executeAndCommit() {
 		try {
 			final int modifiedRows = execute(cnxProvider.borrow());
 			cnxProvider.commit();

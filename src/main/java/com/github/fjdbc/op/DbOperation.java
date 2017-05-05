@@ -3,8 +3,6 @@ package com.github.fjdbc.op;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.github.fjdbc.ConnectionProvider;
-
 /**
  * Represent a database operation that return a row count: insert, update, delete, etc.
  */
@@ -27,5 +25,5 @@ public interface DbOperation {
 	 * 
 	 * @return The number of modified rows.
 	 */
-	int executeAndCommit(ConnectionProvider cnxProvider);
+	int executeAndCommit();
 }

@@ -16,19 +16,19 @@ public class Fjdbc {
 	}
 
 	public StatementOperation statement(String sql) {
-		return new StatementOperation(sql);
+		return new StatementOperation(cnxProvider, sql);
 	}
 
 	public StatementOperation statement(String sql, PreparedStatementBinder binder) {
-		return new StatementOperation(sql, binder);
+		return new StatementOperation(cnxProvider, sql, binder);
 	}
 
 	public CompositeOperation composite(DbOperation... operations) {
-		return new CompositeOperation(operations);
+		return new CompositeOperation(cnxProvider, operations);
 	}
 
 	public CompositeOperation composite(Collection<? extends DbOperation> operations) {
-		return new CompositeOperation(operations);
+		return new CompositeOperation(cnxProvider, operations);
 	}
 
 	public <T> Query<T> query(String sql, ResultSetExtractor<T> extractor) {

@@ -38,7 +38,7 @@ public class Examples {
 		// Execute a statement (update, delete, insert, etc)
 		{
 			final String sql = "update user set name='jack' where name='henri'";
-			final int nRows = fjdbc.statement(sql).executeAndCommit(cnxProvider);
+			final int nRows = fjdbc.statement(sql).executeAndCommit();
 			System.out.println(nRows + " rows changed");
 		}
 
@@ -50,7 +50,7 @@ public class Examples {
 				ps.setString(paramIndex.next(), "jack");
 				ps.setString(paramIndex.next(), "henri");
 			};
-			final int nRows = fjdbc.statement(sql, binder).executeAndCommit(cnxProvider);
+			final int nRows = fjdbc.statement(sql, binder).executeAndCommit();
 			System.out.println(nRows + " rows changed");
 		}
 
@@ -68,7 +68,7 @@ public class Examples {
 			};
 			final DbOperation deleteManagers = fjdbc.statement("delete from user where role=?", binder2);
 
-			final int nRows = fjdbc.composite(updateName, deleteManagers).executeAndCommit(cnxProvider);
+			final int nRows = fjdbc.composite(updateName, deleteManagers).executeAndCommit();
 			System.out.println(nRows + " rows changed");
 		}
 	}
