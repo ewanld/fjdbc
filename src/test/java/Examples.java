@@ -21,7 +21,6 @@ public class Examples {
 			final String sql = "select name from user";
 			final SingleRowExtractor<String> extractor = (rs) -> rs.getString("name");
 			final List<String> names = fjdbc.query(sql, extractor).toList();
-			System.out.println(names);
 		}
 
 		// -------------------------------------------------------------------------------------------------------------
@@ -31,7 +30,6 @@ public class Examples {
 			final PreparedStatementBinder binder = (ps, seq) -> ps.setString(seq.next(), "grunt");
 			final SingleRowExtractor<String> extractor = rs -> rs.getString("name");
 			final List<String> names = fjdbc.query(sql, binder, extractor).toList();
-			System.out.println(names);
 		}
 
 		// -------------------------------------------------------------------------------------------------------------
@@ -39,37 +37,34 @@ public class Examples {
 		{
 			final String sql = "update user set name='jack' where name='henri'";
 			final int nRows = fjdbc.statement(sql).executeAndCommit();
-			System.out.println(nRows + " rows changed");
 		}
 
 		// -------------------------------------------------------------------------------------------------------------
 		// Execute a prepared statement
 		{
 			final String sql = "update user set name=? where name=?";
-			final PreparedStatementBinder binder = (ps, paramIndex) -> {
-				ps.setString(paramIndex.next(), "jack");
-				ps.setString(paramIndex.next(), "henri");
+			final PreparedStatementBinder binder = (ps, seq) -> {
+				ps.setString(seq.next(), "jack");
+				ps.setString(seq.next(), "henri");
 			};
 			final int nRows = fjdbc.statement(sql, binder).executeAndCommit();
-			System.out.println(nRows + " rows changed");
 		}
 
 		// -------------------------------------------------------------------------------------------------------------
 		// Execute a sequence of statements (in a single transaction)
 		{
-			final PreparedStatementBinder binder = (ps, paramIndex) -> {
-				ps.setString(paramIndex.next(), "jack");
-				ps.setString(paramIndex.next(), "henri");
+			final PreparedStatementBinder binder = (ps, seq) -> {
+				ps.setString(seq.next(), "jack");
+				ps.setString(seq.next(), "henri");
 			};
 			final DbOperation updateName = fjdbc.statement("update user set name=? where name=?", binder);
 
-			final PreparedStatementBinder binder2 = (ps, paramIndex) -> {
-				ps.setString(paramIndex.next(), "manager");
+			final PreparedStatementBinder binder2 = (ps, seq) -> {
+				ps.setString(seq.next(), "manager");
 			};
 			final DbOperation deleteManagers = fjdbc.statement("delete from user where role=?", binder2);
 
 			final int nRows = fjdbc.composite(updateName, deleteManagers).executeAndCommit();
-			System.out.println(nRows + " rows changed");
 		}
 	}
 }
