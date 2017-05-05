@@ -4,54 +4,59 @@ Functional wrapper for the JDBC API.
 Requires Java >= 8.
 
 ## Examples
+### Setup
+final Connection connection = DriverManager.getConnection("jdbc/url/to/database");
+final SingleConnectionProvider cnxProvider = new SingleConnectionProvider(connection);
+final Fjdbc fjdbc = new Fjdbc(cnxProvider);
+
 ### Query the database
 ```java
 final String sql = "select name from user";
-final ResultSetExtractor<String> extractor = (rs) -> rs.getString("name");
-final List<String> names = new Query<>(connection, sql, extractor).toList();
+final SingleRowExtractor<String> extractor = (rs) -> rs.getString("name");
+final List<String> names = fjdbc.query(sql, extractor).toList();
 System.out.println(names);
 ```
 
 ### Query the database using a prepared statement
 ```java
 final String sql = "select name from user where role = ?";
-final PreparedStatementBinder binder = (ps) -> ps.setString(1, "grunt");
+final PreparedStatementBinder binder = (ps, seq) -> ps.setString(seq.next(), "grunt");
 final SingleRowExtractor<String> extractor = rs -> rs.getString("name");
-final List<String> names = Query<>(connection, sql, binder, extractor).toList();
+final List<String> names = fjdbc.query(sql, binder, extractor).toList();
 System.out.println(names);
 ```
 
 ### Execute a statement (update, delete, insert, etc)
 ```java
 final String sql = "update user set name='jack' where name='henri'";
-final int nRows = new StatementOperation(sql).executeAndCommit(connection);
+final int nRows = fjdbc.statement(sql).executeAndCommit();
 System.out.println(nRows + " rows changed");
 ```
 
 ### Execute a prepared statement
 ```java
 final String sql = "update user set name=? where name=?";
-final PreparedStatementBinder binder = (ps, paramIndex) -> {
-	ps.setString(paramIndex.next(), "jack");
-	ps.setString(paramIndex.next(), "henri");
+final PreparedStatementBinder binder = (ps, seq) -> {
+	ps.setString(seq.next(), "jack");
+	ps.setString(seq.next(), "henri");
 };
-final int nRows = new StatementOperation(sql, binder).executeAndCommit(connection);
+final int nRows = fjdbc.statement(sql, binder).executeAndCommit();
 System.out.println(nRows + " rows changed");
 ```
 
 ### Execute a sequence of statements (in a single transaction)
 ```java
-final PreparedStatementBinder binder = (ps, paramIndex) -> {
-	ps.setString(paramIndex.next(), "jack");
-	ps.setString(paramIndex.next(), "henri");
+final PreparedStatementBinder binder = (ps, seq) -> {
+	ps.setString(seq.next(), "jack");
+	ps.setString(seq.next(), "henri");
 };
-final DbOperation updateName = new StatementOperation("update user set name=? where name=?", binder);
+final DbOperation updateName = fjdbc.statement("update user set name=? where name=?", binder);
 
-final PreparedStatementBinder binder2 = (ps, paramIndex) -> {
-	ps.setString(paramIndex.next(), "manager");
+final PreparedStatementBinder binder2 = (ps, seq) -> {
+	ps.setString(seq.next(), "manager");
 };
-final DbOperation deleteManagers = new StatementOperation("delete from user where role=?", binder2);
+final DbOperation deleteManagers = fjdbc.statement("delete from user where role=?", binder2);
 
-final int nRows = new CompositeOperation(updateName, deleteManagers).executeAndCommit(connection);
+final int nRows = fjdbc.composite(updateName, deleteManagers).executeAndCommit();
 System.out.println(nRows + " rows changed");
 ```
