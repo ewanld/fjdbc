@@ -5,9 +5,11 @@ Requires Java >= 8.
 
 ## Examples
 ### Setup
+```java
 final Connection connection = DriverManager.getConnection("jdbc/url/to/database");
 final SingleConnectionProvider cnxProvider = new SingleConnectionProvider(connection);
 final Fjdbc fjdbc = new Fjdbc(cnxProvider);
+```
 
 ### Query the database
 ```java
