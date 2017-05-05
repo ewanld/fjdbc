@@ -33,8 +33,8 @@ public class Query<T> {
 		this.extractor = extractor;
 	}
 
-	public Query(ConnectionProvider provider, String sql, ResultSetExtractor<T> extractor) {
-		this(provider, sql, null, extractor);
+	public Query(ConnectionProvider connectionProvider, String sql, ResultSetExtractor<T> extractor) {
+		this(connectionProvider, sql, null, extractor);
 	}
 
 	private boolean isPrepared() {
