@@ -5,13 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.function.Consumer;
 
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.FjdbcException;
@@ -45,39 +41,19 @@ public class Query<T> {
 		return binder != null;
 	}
 
-	/**
-	 * The returned stream must be closed manually by the caller.
-	 */
-	public Stream<T> stream() {
-		Connection cnx = null;
+	public void forEach(Consumer<? super T> callback) {
 		Statement st = null;
 		try {
-			cnx = cnxProvider.borrow();
+			final Connection cnx = cnxProvider.borrow();
 			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
-			final Statement st_final = st; // a final reference to the statement, to use in lambdas.
 			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
-			final Stream<T> res = StreamSupport
-					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
-			res.onClose(() -> {
-				FjdbcUtil.close(st_final);
-				cnxProvider.giveBack();
-			});
-			return res;
+			extractor.extractAll(rs, callback);
 		} catch (final SQLException e) {
+			throw new FjdbcException(e);
+		} finally {
 			FjdbcUtil.close(st);
 			cnxProvider.giveBack();
-			throw new FjdbcException(e);
-		}
-	}
-
-	/**
-	 * Convenience method.
-	 */
-	public <A, R> R collect(Collector<? super T, A, R> collector) {
-		try (Stream<T> s = stream()) {
-			final R res = s.collect(collector);
-			return res;
 		}
 	}
 
@@ -85,6 +61,8 @@ public class Query<T> {
 	 * Convenience method
 	 */
 	public List<T> toList() {
-		return collect(Collectors.toList());
+		final List<T> res = new ArrayList<>();
+		forEach(res::add);
+		return res;
 	}
 }

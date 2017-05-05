@@ -7,7 +7,7 @@ import com.github.fjdbc.Fjdbc;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.SingleConnectionProvider;
 import com.github.fjdbc.op.DbOperation;
-import com.github.fjdbc.query.ResultSetExtractor;
+import com.github.fjdbc.query.SingleRowExtractor;
 
 public class Examples {
 	public static void main(String[] args) throws SQLException {
@@ -19,7 +19,7 @@ public class Examples {
 		// Query the database
 		{
 			final String sql = "select name from user";
-			final ResultSetExtractor<String> extractor = (rs) -> rs.getString("name");
+			final SingleRowExtractor<String> extractor = (rs) -> rs.getString("name");
 			final List<String> names = fjdbc.query(sql, extractor).toList();
 			System.out.println(names);
 		}
@@ -29,7 +29,7 @@ public class Examples {
 		{
 			final String sql = "select name from user where role = ?";
 			final PreparedStatementBinder binder = (ps, seq) -> ps.setString(seq.next(), "grunt");
-			final ResultSetExtractor<String> extractor = rs -> rs.getString("name");
+			final SingleRowExtractor<String> extractor = rs -> rs.getString("name");
 			final List<String> names = fjdbc.query(sql, binder, extractor).toList();
 			System.out.println(names);
 		}
