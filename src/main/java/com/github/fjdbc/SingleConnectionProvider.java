@@ -3,8 +3,9 @@ package com.github.fjdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.github.fjdbc.util.FjdbcUtil;
-
+/**
+ * A {@link ConnectionProvider} to a single connection. The connection is not closed when it is returned.
+ */
 public class SingleConnectionProvider extends ConnectionProvider {
 	private final Connection cnx;
 
@@ -19,7 +20,7 @@ public class SingleConnectionProvider extends ConnectionProvider {
 
 	@Override
 	protected void doGiveBack(Connection _cnx) {
-		FjdbcUtil.closeConnection(_cnx);
+		// no op
 	}
 
 }
