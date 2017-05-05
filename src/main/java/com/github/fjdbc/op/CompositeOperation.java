@@ -17,7 +17,7 @@ public class CompositeOperation implements DbOperation {
 		this.operations = operations;
 	}
 
-	public CompositeOperation(Collection<DbOperation> operations) {
+	public CompositeOperation(Collection<? extends DbOperation> operations) {
 		this(operations.toArray(new DbOperation[0]));
 	}
 
@@ -45,8 +45,7 @@ public class CompositeOperation implements DbOperation {
 			try {
 				modifiedRows += t.execute(cnx);
 			} catch (final Exception e) {
-				throw new FjdbcException(String.format("DB Operation %s/%s failed!", i + 1, operations.length),
-						e);
+				throw new FjdbcException(String.format("DB Operation %s/%s failed!", i + 1, operations.length), e);
 			}
 
 		}
