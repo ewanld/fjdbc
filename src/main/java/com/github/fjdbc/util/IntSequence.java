@@ -6,7 +6,7 @@ public class IntSequence {
 
 	public IntSequence(int startValue) {
 		this.startValue = startValue;
-		reset();
+		counter = startValue;
 	}
 
 	public int next() {
@@ -15,5 +15,9 @@ public class IntSequence {
 
 	public void reset() {
 		counter = startValue;
+	}
+
+	public int get() {
+		return counter;
 	}
 }
