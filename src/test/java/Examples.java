@@ -1,14 +1,18 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
-import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.Fjdbc;
 import com.github.fjdbc.PreparedStatementBinder;
+import com.github.fjdbc.SingleConnectionProvider;
 import com.github.fjdbc.op.DbOperation;
 import com.github.fjdbc.query.ResultSetExtractor;
 
 public class Examples {
-	public static void main(String[] args) {
-		final ConnectionProvider cnxProvider = null;
+	public static void main(String[] args) throws SQLException {
+		final Connection connection = DriverManager.getConnection("jdbc/url/to/database");
+		final SingleConnectionProvider cnxProvider = new SingleConnectionProvider(connection);
 		final Fjdbc fjdbc = new Fjdbc(cnxProvider);
 
 		// -------------------------------------------------------------------------------------------------------------
