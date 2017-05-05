@@ -17,6 +17,7 @@ import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.FjdbcException;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.FjdbcUtil;
+import com.github.fjdbc.util.IntSequence;
 
 public class Query<T> {
 	private final String sql;
@@ -54,7 +55,7 @@ public class Query<T> {
 			cnx = cnxProvider.borrow();
 			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			final Statement st_final = st; // a final reference to the statement, to use in lambdas.
-			if (isPrepared()) binder.bind((PreparedStatement) st);
+			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
 			final Stream<T> res = StreamSupport
 					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
