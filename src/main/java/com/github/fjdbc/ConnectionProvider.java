@@ -32,6 +32,7 @@ public abstract class ConnectionProvider {
 
 	public void commit() {
 		try {
+			if (currentCnx.getAutoCommit()) return;
 			currentCnx.commit();
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
@@ -40,6 +41,7 @@ public abstract class ConnectionProvider {
 
 	public void rollback() {
 		try {
+			if (currentCnx.getAutoCommit()) return;
 			currentCnx.rollback();
 		} catch (final SQLException e) {
 			throw new FjdbcException(e);
