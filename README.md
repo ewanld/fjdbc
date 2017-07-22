@@ -1,7 +1,8 @@
-# fjdbc
-Functional wrapper for the JDBC API.
+# fjdbc: functional wrapper for the JDBC API
 
 Requires Java >= 8.
+
+Latest version: 0.1.0.
 
 ## Examples
 ### Setup
