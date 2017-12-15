@@ -20,6 +20,7 @@ public class Query<T> {
 	private final PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
 	private ConnectionProvider cnxProvider;
+	private Integer fetchSize;
 
 	public Query(ConnectionProvider provider, String sql, PreparedStatementBinder binder,
 			ResultSetExtractor<T> extractor) {
@@ -37,6 +38,10 @@ public class Query<T> {
 		this(connectionProvider, sql, null, extractor);
 	}
 
+	public void setFetchSize(int fetchSize) {
+		this.fetchSize = fetchSize;
+	}
+
 	private boolean isPrepared() {
 		return binder != null;
 	}
@@ -47,6 +52,7 @@ public class Query<T> {
 			final Connection cnx = cnxProvider.borrow();
 			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
+			if (fetchSize != null) st.setFetchSize(fetchSize);
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
 			extractor.extractAll(rs, callback);
 		} catch (final SQLException e) {
@@ -64,5 +70,21 @@ public class Query<T> {
 		final List<T> res = new ArrayList<>();
 		forEach(res::add);
 		return res;
+	}
+
+	public T toSingleResult() {
+		final List<T> res = new ArrayList<>(1);
+		forEach(res::add);
+		assert res.size() <= 1;
+		return res.size() == 1 ? res.get(0) : null;
+	}
+
+	public void execute() {
+		forEach(t -> {
+		});
+	}
+	
+	public String getSql() {
+		return sql;
 	}
 }

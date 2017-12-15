@@ -39,4 +39,8 @@ public class Fjdbc {
 		return new Query<>(cnxProvider, sql, binder, extractor);
 	}
 
+	public ConnectionProvider getConnectionProvider() {
+		return cnxProvider;
+	}
+
 }

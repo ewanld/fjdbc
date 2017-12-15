@@ -6,15 +6,15 @@ public class IntSequence {
 
 	public IntSequence(int startValue) {
 		this.startValue = startValue;
-		counter = startValue;
+		reset();
 	}
 
 	public int next() {
-		return counter++;
+		return ++counter;
 	}
 
 	public void reset() {
-		counter = startValue;
+		counter = startValue - 1;
 	}
 
 	public int get() {

@@ -11,11 +11,34 @@ import java.sql.Ref;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Keeps track if the statement is a batch statement or a single statement.
  */
 public class PreparedStatementEx extends PreparedStatementDelegate {
+	//@formatter:off
+	public static final Set<Class<?>> jdbcTypes = new HashSet<>(Arrays.asList(
+		String.class,
+		BigDecimal.class,
+		Boolean.class,
+		Integer.class,
+		Long.class,
+		Float.class,
+		Double.class,
+		byte[].class,
+		java.sql.Date.class,
+		Time.class,
+		Timestamp.class,
+		Clob.class,
+		Blob.class,
+		Array.class,
+		Ref.class,
+		URL.class
+	));
+	//@formatter:on
 	private boolean isBatch = false;
 
 	public PreparedStatementEx(PreparedStatement ps) {
@@ -45,9 +68,9 @@ public class PreparedStatementEx extends PreparedStatementDelegate {
 	}
 
 	public <T> void setAnyObject(int columnIndex, Object o, Class<T> type) throws SQLException {
-		if (o == null) {
-			ps.setNull(columnIndex, java.sql.Types.OTHER);
-		} else if (type.equals(String.class)) {
+		// if (o == null) {
+		// ps.setNull(columnIndex, java.sql.Types.OTHER);
+		if (type.equals(String.class)) {
 			ps.setString(columnIndex, (String) o);
 		} else if (type.equals(BigDecimal.class)) {
 			ps.setBigDecimal(columnIndex, (BigDecimal) o);
