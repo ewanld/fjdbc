@@ -79,11 +79,6 @@ public class Query<T> {
 		return res.size() == 1 ? res.get(0) : null;
 	}
 
-	public void execute() {
-		forEach(t -> {
-		});
-	}
-	
 	public String getSql() {
 		return sql;
 	}
