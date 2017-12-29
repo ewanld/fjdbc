@@ -31,8 +31,7 @@ public class CompositeOperation implements DbOperation {
 			final int modifiedRows = execute(cnxProvider.borrow());
 			cnxProvider.commit();
 			return modifiedRows;
-		} catch (final Exception e) {
-			
+		} catch (final SQLException e) {
 			throw new FjdbcException(e);
 		} finally {
 			// if the connection was already committed, roll back should be a no op.
@@ -42,13 +41,13 @@ public class CompositeOperation implements DbOperation {
 	}
 
 	@Override
-	public int execute(Connection cnx) throws SQLException {
+	public int execute(Connection cnx) {
 		int modifiedRows = 0;
 		for (int i = 0; i < operations.length; i++) {
 			final DbOperation t = operations[i];
 			try {
 				modifiedRows += t.execute(cnx);
-			} catch (final Exception e) {
+			} catch (final SQLException e) {
 				throw new FjdbcException(String.format("DB Operation %s/%s failed!", i + 1, operations.length), e);
 			}
 
