@@ -1,4 +1,4 @@
-package com.github.fjdbc.util;
+package com.github.fjdbc;
 
 import java.io.InputStream;
 import java.io.Reader;

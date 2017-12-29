@@ -1,4 +1,4 @@
-package com.github.fjdbc.util;
+package com.github.fjdbc;
 
 import java.math.BigDecimal;
 import java.net.URL;

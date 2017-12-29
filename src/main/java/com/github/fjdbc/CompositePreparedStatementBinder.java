@@ -4,8 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import com.github.fjdbc.util.IntSequence;
-
 public class CompositePreparedStatementBinder implements PreparedStatementBinder {
 	private final Collection<? extends PreparedStatementBinder> children;
 

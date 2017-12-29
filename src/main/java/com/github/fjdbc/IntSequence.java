@@ -1,4 +1,4 @@
-package com.github.fjdbc.util;
+package com.github.fjdbc;
 
 public class IntSequence {
 	private int counter;

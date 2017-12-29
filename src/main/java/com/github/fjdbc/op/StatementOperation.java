@@ -6,10 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.github.fjdbc.ConnectionProvider;
+import com.github.fjdbc.IntSequence;
 import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.PreparedStatementBinder;
-import com.github.fjdbc.util.IntSequence;
-import com.github.fjdbc.util.PreparedStatementEx;
+import com.github.fjdbc.PreparedStatementEx;
 
 /**
  * Represent a database operation that return a row count: insert, update, delete, etc.<br>

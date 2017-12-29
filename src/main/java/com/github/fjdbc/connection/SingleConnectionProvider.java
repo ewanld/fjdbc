@@ -1,7 +1,9 @@
-package com.github.fjdbc;
+package com.github.fjdbc.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import com.github.fjdbc.ConnectionProvider;
 
 /**
  * A {@link ConnectionProvider} to a single connection. The connection is not closed when it is returned.

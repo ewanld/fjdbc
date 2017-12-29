@@ -1,9 +1,11 @@
-package com.github.fjdbc;
+package com.github.fjdbc.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
+
+import com.github.fjdbc.ConnectionProvider;
 
 public class DataSourceConnectionProvider extends ConnectionProvider {
 

@@ -3,8 +3,6 @@ package com.github.fjdbc;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import com.github.fjdbc.util.IntSequence;
-
 /**
  * Represent a function that binds values to a prepared statement.
  */
