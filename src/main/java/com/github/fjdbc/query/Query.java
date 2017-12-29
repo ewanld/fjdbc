@@ -58,7 +58,7 @@ public class Query<T> {
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException(e);
 		} finally {
-			FjdbcUtil.close(st);
+			FjdbcUtil.close(null, st);
 			cnxProvider.giveBack();
 		}
 	}
