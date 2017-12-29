@@ -66,43 +66,4 @@ public class PreparedStatementEx extends PreparedStatementDelegate {
 	public boolean isBatch() {
 		return isBatch;
 	}
-
-	public <T> void setAnyObject(int columnIndex, Object o, Class<T> type) throws SQLException {
-		// if (o == null) {
-		// ps.setNull(columnIndex, java.sql.Types.OTHER);
-		if (type.equals(String.class)) {
-			ps.setString(columnIndex, (String) o);
-		} else if (type.equals(BigDecimal.class)) {
-			ps.setBigDecimal(columnIndex, (BigDecimal) o);
-		} else if (type.equals(Boolean.class)) {
-			ps.setBoolean(columnIndex, (Boolean) o);
-		} else if (type.equals(Integer.class)) {
-			ps.setInt(columnIndex, (Integer) o);
-		} else if (type.equals(Long.class)) {
-			ps.setLong(columnIndex, (Long) o);
-		} else if (type.equals(Float.class)) {
-			ps.setFloat(columnIndex, (Float) o);
-		} else if (type.equals(Double.class)) {
-			ps.setDouble(columnIndex, (Double) o);
-		} else if (type.equals(byte[].class)) {
-			ps.setBytes(columnIndex, (byte[]) o);
-		} else if (type.equals(java.sql.Date.class)) {
-			ps.setDate(columnIndex, (Date) o);
-		} else if (type.equals(Time.class)) {
-			ps.setTime(columnIndex, (Time) o);
-		} else if (type.equals(Timestamp.class)) {
-			ps.setTimestamp(columnIndex, (Timestamp) o);
-		} else if (type.equals(Clob.class)) {
-			ps.setClob(columnIndex, (Clob) o);
-		} else if (type.equals(Blob.class)) {
-			ps.setBlob(columnIndex, (Blob) o);
-		} else if (type.equals(Array.class)) {
-			ps.setArray(columnIndex, (Array) o);
-		} else if (type.equals(Ref.class)) {
-			ps.setRef(columnIndex, (Ref) o);
-		} else if (type.equals(URL.class)) {
-			ps.setURL(columnIndex, (URL) o);
-		}
-	}
-
 }
