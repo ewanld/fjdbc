@@ -10,9 +10,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.github.fjdbc.ConnectionProvider;
-import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.PreparedStatementBinder;
-import com.github.fjdbc.util.FjdbcUtil;
+import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.util.IntSequence;
 
 public class Query<T> {
@@ -58,8 +57,16 @@ public class Query<T> {
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException(e);
 		} finally {
-			FjdbcUtil.close(null, st);
+			close(st);
 			cnxProvider.giveBack();
+		}
+	}
+
+	private static void close(Statement st) {
+		try {
+			if (st != null) st.close();
+		} catch (final SQLException e) {
+			throw new RuntimeSQLException(e);
 		}
 	}
 
