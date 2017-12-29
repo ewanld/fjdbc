@@ -17,14 +17,14 @@ public abstract class ConnectionProvider {
 
 	protected abstract Connection doBorrow() throws SQLException;
 
-	public final void giveBack() throws FjdbcException {
+	public final void giveBack() throws RuntimeSQLException {
 		if (currentCnx == null) return;
 
 		try {
 			doGiveBack(currentCnx);
 			currentCnx = null;
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		}
 	}
 
@@ -35,7 +35,7 @@ public abstract class ConnectionProvider {
 			if (currentCnx.getAutoCommit()) return;
 			currentCnx.commit();
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		}
 	}
 
@@ -44,7 +44,7 @@ public abstract class ConnectionProvider {
 			if (currentCnx.getAutoCommit()) return;
 			currentCnx.rollback();
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		}
 	}
 }

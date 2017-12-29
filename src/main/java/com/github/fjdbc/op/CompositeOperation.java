@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import com.github.fjdbc.ConnectionProvider;
-import com.github.fjdbc.FjdbcException;
+import com.github.fjdbc.RuntimeSQLException;
 
 /**
  * Represents a sequence of operations that must be executed in a single transaction.
@@ -32,7 +32,7 @@ public class CompositeOperation implements DbOperation {
 			cnxProvider.commit();
 			return modifiedRows;
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		} finally {
 			// if the connection was already committed, roll back should be a no op.
 			cnxProvider.rollback();
@@ -48,7 +48,7 @@ public class CompositeOperation implements DbOperation {
 			try {
 				modifiedRows += t.execute(cnx);
 			} catch (final SQLException e) {
-				throw new FjdbcException(String.format("DB Operation %s/%s failed!", i + 1, operations.length), e);
+				throw new RuntimeSQLException(String.format("DB Operation %s/%s failed!", i + 1, operations.length), e);
 			}
 
 		}

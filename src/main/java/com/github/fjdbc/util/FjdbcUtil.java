@@ -6,17 +6,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.github.fjdbc.FjdbcException;
+import com.github.fjdbc.RuntimeSQLException;
 
 /**
  * Utility methods
  */
 public class FjdbcUtil {
-	public static void close(ResultSet rs) throws FjdbcException {
+	public static void close(ResultSet rs) throws RuntimeSQLException {
 		try {
 			if (rs != null) rs.close();
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		}
 	}
 
@@ -27,7 +27,7 @@ public class FjdbcUtil {
 			return ps;
 		} catch (final SQLException e) {
 			FjdbcUtil.close(ps);
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		}
 	}
 
@@ -41,7 +41,7 @@ public class FjdbcUtil {
 				if (st != null) st.close();
 			}
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		} finally {
 			closeConnection(cnx);
 		}
@@ -52,7 +52,7 @@ public class FjdbcUtil {
 		try {
 			cnx.close();
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class FjdbcUtil {
 		try {
 			cnx.rollback();
 		} catch (final SQLException e) {
-			throw new FjdbcException(e);
+			throw new RuntimeSQLException(e);
 		}
 	}
 

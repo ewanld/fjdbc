@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.github.fjdbc.ConnectionProvider;
-import com.github.fjdbc.FjdbcException;
+import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.util.IntSequence;
 import com.github.fjdbc.util.PreparedStatementEx;
@@ -85,7 +85,7 @@ public class StatementOperation implements DbOperation {
 			cnxProvider.commit();
 			return modifiedRows;
 		} catch (final SQLException e) {
-			throw new FjdbcException("Error executing the SQL statement: " + sql, e);
+			throw new RuntimeSQLException("Error executing the SQL statement: " + sql, e);
 		} finally {
 			// if the connection was already committed, roll back should be a no op.
 			cnxProvider.rollback();
