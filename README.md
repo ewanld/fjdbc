@@ -1,9 +1,6 @@
 # fjdbc: functional wrapper for the JDBC API
 
-fjdbc is a lightweight library to write JDBC code in more convenient and functional style.
-Requires Java >= 8.
-
-Latest version: 0.1.0.
+fjdbc is a lightweight library to write JDBC code in a more convenient and functional style.
 
 fjdbc is built around a small number of abstractions:
 * ```ConnectionProvider``` is responsible for getting ```java.sql.Connection``` instances.
@@ -13,6 +10,9 @@ fjdbc is built around a small number of abstractions:
 * ```Query``` represents a SQL SELECT statement.
 * ```Fjdbc``` is the library façade.
 * ```SQLException``` instances are wrapped in an unchecked ```RuntimeSQLException```.
+
+Requires Java >= 8.
+Latest version: 0.1.0.
 
 ## Examples
 ### Setup
