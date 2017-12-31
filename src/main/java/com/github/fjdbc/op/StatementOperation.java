@@ -22,6 +22,10 @@ public class StatementOperation implements DbOperation {
 	private final ConnectionProvider cnxProvider;
 
 	/**
+	 * Create a statement.
+	 * <p>
+	 * No actual connection is established with the database until the statement is executed.
+	 * 
 	 * @param cnxProvider
 	 *            The provider of {@link Connection} instances.
 	 * @param sql

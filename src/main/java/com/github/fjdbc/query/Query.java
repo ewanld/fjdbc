@@ -30,6 +30,10 @@ public class Query<T> {
 	private SQLConsumer<Statement> afterExecutionConsumer;
 
 	/**
+	 * Create a new query.
+	 * <p>
+	 * No actual connection is established with the database until the statement is executed.
+	 * 
 	 * @param connectionProvider
 	 *            The provider of {@link Connection} instances.
 	 * @param sql
@@ -53,6 +57,10 @@ public class Query<T> {
 	}
 
 	/**
+	 * Create a new query.
+	 * <p>
+	 * No actual connection is established with the database until the statement is executed.
+	 * 
 	 * @param connectionProvider
 	 *            The provider of {@link Connection} instances.
 	 * @param sql
@@ -92,6 +100,11 @@ public class Query<T> {
 		return this;
 	}
 
+	/**
+	 * Bind parameters to the {@code PreparedStatement}.
+	 * <p>
+	 * Implementors should only call {@code setXXX} methods from the {@link PreparedStatement}.
+	 */
 	public Query<T> setBinder(PreparedStatementBinder binder) {
 		this.binder = binder;
 		return this;

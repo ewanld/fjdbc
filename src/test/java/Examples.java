@@ -7,10 +7,11 @@ import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.Fjdbc;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.connection.SingleConnectionProvider;
-import com.github.fjdbc.op.DbOperation;
+import com.github.fjdbc.op.StatementOperation;
 import com.github.fjdbc.query.SingleRowExtractor;
 
 public class Examples {
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws SQLException {
 		// Setup
 		final Connection connection = DriverManager.getConnection("jdbc/url/to/database");
@@ -28,10 +29,14 @@ public class Examples {
 		// -------------------------------------------------------------------------------------------------------------
 		// Query the database using a prepared statement
 		{
+			// @formatter:off
 			final String sql = "select name from user where role = ?";
-			final PreparedStatementBinder binder = (ps, seq) -> ps.setString(seq.next(), "grunt");
 			final SingleRowExtractor<String> extractor = rs -> rs.getString("name");
-			final List<String> names = fjdbc.query(sql, binder, extractor).toList();
+			final List<String> names = fjdbc
+				.query(sql, extractor)
+				.setBinder((ps, seq) -> ps.setString(seq.next(), "grunt"))
+				.toList();
+			// @formatter:on
 		}
 
 		// -------------------------------------------------------------------------------------------------------------
@@ -44,29 +49,37 @@ public class Examples {
 		// -------------------------------------------------------------------------------------------------------------
 		// Execute a prepared statement
 		{
+			// @formatter:off
 			final String sql = "update user set name=? where name=?";
-			final PreparedStatementBinder binder = (ps, seq) -> {
-				ps.setString(seq.next(), "jack");
-				ps.setString(seq.next(), "henri");
-			};
-			final int nRows = fjdbc.statement(sql, binder).executeAndCommit();
+			final int nRows = fjdbc
+				.statement(sql)
+				.setBinder((ps, seq) -> {
+					ps.setString(seq.next(), "jack");
+					ps.setString(seq.next(), "henri");
+				})
+				.executeAndCommit();
+			// @formatter:on
 		}
 
 		// -------------------------------------------------------------------------------------------------------------
 		// Execute a sequence of statements (in a single transaction)
 		{
-			final PreparedStatementBinder binder = (ps, seq) -> {
-				ps.setString(seq.next(), "jack");
-				ps.setString(seq.next(), "henri");
-			};
-			final DbOperation updateName = fjdbc.statement("update user set name=? where name=?", binder);
+			// @formatter:off
+			final StatementOperation updateName = fjdbc
+				.statement("update user set name=? where name=?")
+				.setBinder((ps, seq) -> {
+					ps.setString(seq.next(), "jack");
+					ps.setString(seq.next(), "henri");
+				});
 
-			final PreparedStatementBinder binder2 = (ps, seq) -> {
-				ps.setString(seq.next(), "manager");
-			};
-			final DbOperation deleteManagers = fjdbc.statement("delete from user where role=?", binder2);
+			final StatementOperation deleteManagers = fjdbc
+				.statement("delete from user where role=?")
+				.setBinder((ps, seq) -> {
+					ps.setString(seq.next(), "manager");
+				});
 
 			final int nRows = fjdbc.composite(updateName, deleteManagers).executeAndCommit();
+			// @formatter:on
 		}
 	}
 }

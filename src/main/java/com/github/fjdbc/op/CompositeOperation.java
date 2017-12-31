@@ -8,14 +8,22 @@ import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.RuntimeSQLException;
 
 /**
- * Represents a sequence of {@link DbOperation} that must be executed in a single transaction.
+ * Merge a sequence of {@link DbOperation} as a single {@link DbOperation}.
+ * <p>
+ * This allows the operations be executed in a single transaction.
  */
 public class CompositeOperation implements DbOperation {
 	private final DbOperation[] operations;
 	private final ConnectionProvider cnxProvider;
 
-	public CompositeOperation(ConnectionProvider cnxProvider, DbOperation... operations) {
-		this.cnxProvider = cnxProvider;
+	/**
+	 * @param connectionProvider
+	 *            The provider of {@link Connection} instances.
+	 * @param operations
+	 *            The sequence of
+	 */
+	public CompositeOperation(ConnectionProvider connectionProvider, DbOperation... operations) {
+		this.cnxProvider = connectionProvider;
 		this.operations = operations;
 	}
 
