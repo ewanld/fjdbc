@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.Fjdbc;
-import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.connection.SingleConnectionProvider;
 import com.github.fjdbc.op.StatementOperation;
 import com.github.fjdbc.query.SingleRowExtractor;
