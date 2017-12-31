@@ -9,7 +9,6 @@ import java.sql.DriverManager;
 import org.apache.commons.io.FileUtils;
 
 import com.github.fjdbc.Fjdbc;
-import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.connection.SingleConnectionProvider;
 import com.github.fjdbc.op.NoOperation;
@@ -64,11 +63,11 @@ public class FjdbcTest {
 	private void insert() throws IOException {
 		final StatementOperation statement1 = fjdbc.statement("insert into user values(1, 'name1')");
 		final StatementOperation statement2 = fjdbc.statement("insert into user values(2, 'name2')");
-		final PreparedStatementBinder statement3Binder = (ps, seq) -> {
+		final StatementOperation statement3 = fjdbc.statement("insert into user values(?, ?)");
+		statement3.setBinder((ps, seq) -> {
 			ps.setInt(seq.next(), 3);
 			ps.setString(seq.next(), "name3");
-		};
-		final StatementOperation statement3 = fjdbc.statement("insert into user values(?, ?)", statement3Binder);
+		});
 		statement1.executeAndCommit();
 		fjdbc.composite(statement2, statement3).executeAndCommit();
 	}

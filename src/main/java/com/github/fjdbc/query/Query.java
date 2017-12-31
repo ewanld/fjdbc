@@ -23,7 +23,7 @@ import com.github.fjdbc.util.SQLConsumer;
  */
 public class Query<T> {
 	private final String sql;
-	private final PreparedStatementBinder binder;
+	private PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
 	private ConnectionProvider cnxProvider;
 	private SQLConsumer<Statement> beforeExecutionConsumer;
@@ -73,8 +73,9 @@ public class Query<T> {
 	 * If the specified consumer throws a {@link SQLException}, it will be wrapped in an unchecked
 	 * {@link RuntimeSQLException}.
 	 */
-	public void doBeforeExecution(SQLConsumer<Statement> statementConsumer) {
+	public Query<T> doBeforeExecution(SQLConsumer<Statement> statementConsumer) {
 		this.beforeExecutionConsumer = statementConsumer;
+		return this;
 	}
 
 	/**
@@ -83,9 +84,17 @@ public class Query<T> {
 	 * <p>
 	 * If the specified consumer throws a {@link SQLException}, it will be wrapped in an unchecked
 	 * {@link RuntimeSQLException}.
+	 * 
+	 * @return
 	 */
-	public void doAfterExecution(SQLConsumer<Statement> statementConsumer) {
+	public Query<T> doAfterExecution(SQLConsumer<Statement> statementConsumer) {
 		this.afterExecutionConsumer = statementConsumer;
+		return this;
+	}
+
+	public Query<T> setBinder(PreparedStatementBinder binder) {
+		this.binder = binder;
+		return this;
 	}
 
 	private boolean isPrepared() {

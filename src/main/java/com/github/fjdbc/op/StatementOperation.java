@@ -18,7 +18,7 @@ import com.github.fjdbc.PreparedStatementEx;
  */
 public class StatementOperation implements DbOperation {
 	private final String sql;
-	private final PreparedStatementBinder binder;
+	private PreparedStatementBinder binder;
 	private final ConnectionProvider cnxProvider;
 
 	/**
@@ -47,6 +47,11 @@ public class StatementOperation implements DbOperation {
 		this.cnxProvider = cnxProvider;
 		this.sql = sql;
 		this.binder = binder;
+	}
+
+	public StatementOperation setBinder(PreparedStatementBinder binder) {
+		this.binder = binder;
+		return this;
 	}
 
 	private boolean isPrepared() {
