@@ -8,7 +8,7 @@ import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.RuntimeSQLException;
 
 /**
- * Represents a sequence of operations that must be executed in a single transaction.
+ * Represents a sequence of {@link DbOperation} that must be executed in a single transaction.
  */
 public class CompositeOperation implements DbOperation {
 	private final DbOperation[] operations;

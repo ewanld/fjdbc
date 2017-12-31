@@ -15,6 +15,12 @@ import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.util.SQLConsumer;
 
+/**
+ * Represent an SQL SELECT statement.
+ * 
+ * @param <T>
+ *            The type of objects to be extracted from the {@link ResultSet}}.
+ */
 public class Query<T> {
 	private final String sql;
 	private final PreparedStatementBinder binder;
@@ -23,26 +29,61 @@ public class Query<T> {
 	private SQLConsumer<Statement> beforeExecutionConsumer;
 	private SQLConsumer<Statement> afterExecutionConsumer;
 
-	public Query(ConnectionProvider provider, String sql, PreparedStatementBinder binder,
+	/**
+	 * @param connectionProvider
+	 *            The provider of {@link Connection} instances.
+	 * @param sql
+	 *            The raw SQL string. It should be a SELECT statement.
+	 * @param binder
+	 *            The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
+	 *            parameters.
+	 * @param extractor
+	 *            Extracts individual objects from a {@link ResultSet}.
+	 */
+	public Query(ConnectionProvider connectionProvider, String sql, PreparedStatementBinder binder,
 			ResultSetExtractor<T> extractor) {
-		assert provider != null;
+		assert connectionProvider != null;
 		assert sql != null;
 		assert extractor != null;
 
-		this.cnxProvider = provider;
+		this.cnxProvider = connectionProvider;
 		this.sql = sql;
 		this.binder = binder;
 		this.extractor = extractor;
 	}
 
+	/**
+	 * @param connectionProvider
+	 *            The provider of {@link Connection} instances.
+	 * @param sql
+	 *            The raw SQL string. It should be a SELECT statement.
+	 * @param extractor
+	 *            Extracts individual objects from a {@link ResultSet}.
+	 */
 	public Query(ConnectionProvider connectionProvider, String sql, ResultSetExtractor<T> extractor) {
 		this(connectionProvider, sql, null, extractor);
 	}
 
+	/**
+	 * User-defined code to be executed after the {@link Statement} is created, but before it is executed.
+	 * <p>
+	 * This can be useful for setting Statement parameters, as {@link Statement#setFetchSize(int)},
+	 * {@link Statement#setMaxRows(int)}, etc.
+	 * <p>
+	 * If the specified consumer throws a {@link SQLException}, it will be wrapped in an unchecked
+	 * {@link RuntimeSQLException}.
+	 */
 	public void doBeforeExecution(SQLConsumer<Statement> statementConsumer) {
 		this.beforeExecutionConsumer = statementConsumer;
 	}
 
+	/**
+	 * User-defined code to be executed after the {@link Statement} is executed, but before the {@link ResultSet} is
+	 * read.
+	 * <p>
+	 * If the specified consumer throws a {@link SQLException}, it will be wrapped in an unchecked
+	 * {@link RuntimeSQLException}.
+	 */
 	public void doAfterExecution(SQLConsumer<Statement> statementConsumer) {
 		this.afterExecutionConsumer = statementConsumer;
 	}
@@ -51,6 +92,9 @@ public class Query<T> {
 		return binder != null;
 	}
 
+	/**
+	 * Execute the query, the calls the specified callback for each object extracted from the {@link ResultSet}.
+	 */
 	public void forEach(Consumer<? super T> callback) {
 		Statement st = null;
 		try {
@@ -78,7 +122,14 @@ public class Query<T> {
 	}
 
 	/**
-	 * Convenience method
+	 * Execute the query, then returns a list of objects extracted from the {@link ResultSet}.
+	 * <p>
+	 * Convenience method; it is equivalent to:
+	 * 
+	 * <pre>
+	 * List<T> list = new ArrayList<>();
+	 * forEach(list::add);
+	 * </pre>
 	 */
 	public List<T> toList() {
 		final List<T> res = new ArrayList<>();
@@ -86,13 +137,23 @@ public class Query<T> {
 		return res;
 	}
 
+	/**
+	 * Execute the query, then returns the single object extracted from the {@link ResultSet}.
+	 * 
+	 * @throws IllegalStateException
+	 *             if more than one object could be extracted from the {@link ResultSet}.
+	 */
 	public T toSingleResult() {
 		final List<T> res = new ArrayList<>(1);
 		forEach(res::add);
-		assert res.size() <= 1;
+		if (res.size() > 1) throw new IllegalStateException(
+				"The query returned several objects when only 1 was expected. The query was:\n" + sql);
 		return res.size() == 1 ? res.get(0) : null;
 	}
 
+	/**
+	 * Returns the raw SQL string.
+	 */
 	public String getSql() {
 		return sql;
 	}

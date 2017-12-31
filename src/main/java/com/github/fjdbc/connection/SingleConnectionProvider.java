@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import com.github.fjdbc.ConnectionProvider;
 
 /**
- * A {@link ConnectionProvider} to a single connection. The connection is not closed when it is returned.
+ * A {@link ConnectionProvider} to a single connection.
+ * <p>
+ * The connection is not closed when {@link #giveBack()} is called.
  */
 public class SingleConnectionProvider extends ConnectionProvider {
 	private final Connection cnx;

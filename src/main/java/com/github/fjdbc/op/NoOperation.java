@@ -5,6 +5,9 @@ import java.sql.SQLException;
 
 /**
  * An operation that does nothing.
+ * <p>
+ * This can be useful as a return value for methods that must return a {@link DbOperation}, but when no processing is
+ * required.
  */
 public class NoOperation implements DbOperation {
 

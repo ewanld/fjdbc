@@ -12,7 +12,8 @@ import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.PreparedStatementEx;
 
 /**
- * Represent a database operation that return a row count: insert, update, delete, etc.<br>
+ * Represent a database operation that modifies rows: insert, update, delete, etc.
+ * <p>
  * Supports prepared statements, and batch statements.
  */
 public class StatementOperation implements DbOperation {
@@ -20,10 +21,25 @@ public class StatementOperation implements DbOperation {
 	private final PreparedStatementBinder binder;
 	private final ConnectionProvider cnxProvider;
 
+	/**
+	 * @param cnxProvider
+	 *            The provider of {@link Connection} instances.
+	 * @param sql
+	 *            The raw SQL string to be executed.
+	 */
 	public StatementOperation(ConnectionProvider cnxProvider, String sql) {
 		this(cnxProvider, sql, null);
 	}
 
+	/**
+	 * @param cnxProvider
+	 *            The provider of {@link Connection} instances.
+	 * @param sql
+	 *            The raw SQL string to be executed.
+	 * @param binder
+	 *            The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
+	 *            parameters.
+	 */
 	public StatementOperation(ConnectionProvider cnxProvider, String sql, PreparedStatementBinder binder) {
 		assert cnxProvider != null;
 		assert sql != null;

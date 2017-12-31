@@ -5,6 +5,9 @@ import java.util.function.Consumer;
 
 import com.github.fjdbc.RuntimeSQLException;
 
+/**
+ * A {@link Consumer} that may throw a {@link SQLException}.
+ */
 @FunctionalInterface
 public interface SQLConsumer<T> {
 	void accept(T t) throws SQLException;

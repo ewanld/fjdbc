@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 
+/**
+ * Merge a sequence of {@link PreparedStatementBinder} instances as a single {@link PreparedStatementBinder}.
+ */
 public class CompositePreparedStatementBinder implements PreparedStatementBinder {
 	private final Collection<? extends PreparedStatementBinder> children;
 

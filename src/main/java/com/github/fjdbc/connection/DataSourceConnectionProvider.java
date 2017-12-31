@@ -7,8 +7,10 @@ import javax.sql.DataSource;
 
 import com.github.fjdbc.ConnectionProvider;
 
+/**
+ * A {@link ConnectionProvider} that wraps a {@link DataSource}.
+ */
 public class DataSourceConnectionProvider extends ConnectionProvider {
-
 	private final DataSource dataSource;
 
 	public DataSourceConnectionProvider(DataSource dataSource) {
