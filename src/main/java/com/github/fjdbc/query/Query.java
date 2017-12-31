@@ -13,13 +13,15 @@ import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.IntSequence;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.RuntimeSQLException;
+import com.github.fjdbc.util.SQLConsumer;
 
 public class Query<T> {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
 	private ConnectionProvider cnxProvider;
-	private Integer fetchSize;
+	private SQLConsumer<Statement> beforeExecutionConsumer;
+	private SQLConsumer<Statement> afterExecutionConsumer;
 
 	public Query(ConnectionProvider provider, String sql, PreparedStatementBinder binder,
 			ResultSetExtractor<T> extractor) {
@@ -37,8 +39,12 @@ public class Query<T> {
 		this(connectionProvider, sql, null, extractor);
 	}
 
-	public void setFetchSize(int fetchSize) {
-		this.fetchSize = fetchSize;
+	public void doBeforeExecution(SQLConsumer<Statement> statementConsumer) {
+		this.beforeExecutionConsumer = statementConsumer;
+	}
+
+	public void doAfterExecution(SQLConsumer<Statement> statementConsumer) {
+		this.afterExecutionConsumer = statementConsumer;
 	}
 
 	private boolean isPrepared() {
@@ -51,8 +57,9 @@ public class Query<T> {
 			final Connection cnx = cnxProvider.borrow();
 			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
-			if (fetchSize != null) st.setFetchSize(fetchSize);
+			if (beforeExecutionConsumer != null) beforeExecutionConsumer.accept(st);
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
+			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(st);
 			extractor.extractAll(rs, callback);
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException(e);

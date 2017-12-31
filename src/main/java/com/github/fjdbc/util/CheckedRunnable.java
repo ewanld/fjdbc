@@ -1,13 +1,13 @@
-
+package com.github.fjdbc.util;
 
 @FunctionalInterface
 public interface CheckedRunnable {
 	void run() throws Exception;
 
-	public static Runnable uncheck(CheckedRunnable checkedRunnable) {
+	public default Runnable uncheck() {
 		return () -> {
 			try {
-				checkedRunnable.run();
+				run();
 			} catch (final Exception e) {
 				throw new RuntimeException(e);
 			}

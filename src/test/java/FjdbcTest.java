@@ -16,6 +16,7 @@ import com.github.fjdbc.op.NoOperation;
 import com.github.fjdbc.op.StatementOperation;
 import com.github.fjdbc.query.Query;
 import com.github.fjdbc.query.SingleRowExtractor;
+import com.github.fjdbc.util.CheckedUtil;
 
 /**
  * This class conforms to the POJO convention of maven surefire.
@@ -50,6 +51,7 @@ public class FjdbcTest {
 		delete();
 		insert();
 		query();
+		queryWithLimit();
 		writer.flush();
 		assert FileUtils.contentEquals(last, ref);
 		delete();
@@ -74,6 +76,14 @@ public class FjdbcTest {
 	private void query() throws IOException {
 		final SingleRowExtractor<Integer> extractor = rs -> rs.getInt("id");
 		writeQuery(fjdbc.query("select id from user", extractor));
+	}
+
+	private void queryWithLimit() throws IOException {
+		final SingleRowExtractor<Integer> extractor = rs -> rs.getInt("id");
+
+		final Query<Integer> query = fjdbc.query("select id from user", extractor);
+		query.doBeforeExecution(st -> st.setMaxRows(1));
+		writeQuery(query);
 	}
 
 	public void testInvalidStatement() {
@@ -104,7 +114,7 @@ public class FjdbcTest {
 	}
 
 	public void write(Object o) {
-		TestUtil.quietly(() -> writer.write(o == null ? "null" : o.toString()));
+		CheckedUtil.quietly(() -> writer.write(o == null ? "null" : o.toString()));
 	}
 
 	public void tearDown() throws Exception {

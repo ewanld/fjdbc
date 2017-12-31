@@ -1,13 +1,10 @@
+package com.github.fjdbc.util;
 
-public class TestUtil {
+public class CheckedUtil {
 	/**
 	 * Run an expression block, wrapping all exceptions into a RuntimeException.
 	 */
 	public static void quietly(CheckedRunnable checkedRunnable) {
-		try {
-			checkedRunnable.run();
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
+		checkedRunnable.uncheck().run();
 	}
 }
