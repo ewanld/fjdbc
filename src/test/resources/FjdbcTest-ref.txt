@@ -2,3 +2,5 @@ select id from user
 1
 2
 3
+select id from user
+1
