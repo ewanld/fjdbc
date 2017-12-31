@@ -43,9 +43,11 @@ public class FjdbcTest {
 		fjdbc = new Fjdbc(connProvider);
 	}
 
+	/**
+	 * delete table 'user', insert data, then query the table to check if the insertion was performed.
+	 */
 	public void testAll() throws IOException {
 		delete();
-		noOp();
 		insert();
 		query();
 		writer.flush();
@@ -55,16 +57,6 @@ public class FjdbcTest {
 
 	private void delete() throws IOException {
 		fjdbc.statement("delete from user").executeAndCommit();
-	}
-
-	public void testInvalidStatement() {
-		boolean exception = false;
-		try {
-			fjdbc.statement("invalid statement *^").executeAndCommit();
-		} catch (final RuntimeSQLException e) {
-			exception = true;
-		}
-		assert exception;
 	}
 
 	private void insert() throws IOException {
@@ -79,13 +71,26 @@ public class FjdbcTest {
 		fjdbc.composite(statement2, statement3).executeAndCommit();
 	}
 
-	private void noOp() {
-		new NoOperation().executeAndCommit();
-	}
-
 	private void query() throws IOException {
 		final SingleRowExtractor<Integer> extractor = rs -> rs.getInt("id");
 		writeQuery(fjdbc.query("select id from user", extractor));
+	}
+
+	public void testInvalidStatement() {
+		boolean exception = false;
+		try {
+			fjdbc.statement("invalid statement *^").executeAndCommit();
+		} catch (final RuntimeSQLException e) {
+			exception = true;
+		}
+		assert exception;
+	}
+
+	/**
+	 * Test the NoOperation class
+	 */
+	public void testNoOp() {
+		new NoOperation().executeAndCommit();
 	}
 
 	public <T> void writeQuery(Query<T> query) throws IOException {
