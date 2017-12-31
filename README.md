@@ -18,7 +18,7 @@ Latest version: 0.1.0.
 ### Setup
 ```java
 final Connection connection = DriverManager.getConnection("jdbc/url/to/database");
-final SingleConnectionProvider cnxProvider = new SingleConnectionProvider(connection);
+final ConnectionProvider cnxProvider = new SingleConnectionProvider(connection);
 final Fjdbc fjdbc = new Fjdbc(cnxProvider);
 ```
 
