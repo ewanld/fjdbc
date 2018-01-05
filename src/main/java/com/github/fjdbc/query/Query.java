@@ -75,7 +75,7 @@ public class Query<T> {
 	/**
 	 * User-defined code to be executed after the {@link Statement} is created, but before it is executed.
 	 * <p>
-	 * This can be useful for setting Statement options, as {@link Statement#setFetchSize(int)},
+	 * This can be useful for setting Statement options, such as {@link Statement#setFetchSize(int)},
 	 * {@link Statement#setMaxRows(int)}, etc.
 	 * <p>
 	 * If the specified consumer throws a {@link SQLException}, it will be wrapped in an unchecked
