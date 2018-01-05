@@ -79,13 +79,14 @@ public class StatementOperation implements DbOperation {
 		try (PreparedStatement ps = cnx.prepareStatement(sql)) {
 			final PreparedStatementEx psx = new PreparedStatementEx(ps);
 			binder.bind(psx, new IntSequence(1));
+			final int nRows;
 			if (psx.isBatch()) {
-				final int[] nRows = ps.executeBatch();
-				return getNRowsModifiedByBatch(nRows);
+				final int[] nRows_array = ps.executeBatch();
+				nRows = getNRowsModifiedByBatch(nRows_array);
 			} else {
-				final int nRows = ps.executeUpdate();
-				return nRows;
+				nRows = ps.executeUpdate();
 			}
+			return nRows;
 		}
 	}
 
