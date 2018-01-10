@@ -149,7 +149,7 @@ public class Query<T> {
 	 * Convenience method; it is equivalent to:
 	 * 
 	 * <pre>
-	 * List<T> list = new ArrayList<>();
+	 * List&lt;T&gt; list = new ArrayList&lt;&gt;();
 	 * forEach(list::add);
 	 * </pre>
 	 */

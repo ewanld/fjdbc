@@ -13,7 +13,7 @@ public interface SingleRowExtractor<T> extends ResultSetExtractor<T> {
 	 * Convert the current ResultSet row to an instance of type {@code T}.
 	 * <p>
 	 * Implementors should not call the {@link ResultSet#next()} method or any other method that moves the
-	 * {@ResultSet}'s cursor. If this is required, implement {@link ResultSetExtractor} instead.
+	 * {@code ResultSet}'s cursor. If this is required, implement {@link ResultSetExtractor} instead.
 	 */
 	T extract(ResultSet rs) throws SQLException;
 
