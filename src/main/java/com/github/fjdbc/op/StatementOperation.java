@@ -2,17 +2,15 @@ package com.github.fjdbc.op;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.IntSequence;
+import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.SQLConsumer;
 import com.github.fjdbc.internal.PreparedStatementEx;
-import com.github.fjdbc.query.Query;
-import com.github.fjdbc.PreparedStatementBinder;
 
 /**
  * Represent a database operation that modifies rows: insert, update, delete, etc.
@@ -30,11 +28,10 @@ public class StatementOperation implements DbOperation {
 	 * Create a statement.
 	 * <p>
 	 * No actual connection is established with the database until the statement is executed.
-	 * 
 	 * @param cnxProvider
-	 *            The provider of {@link Connection} instances.
+	 *        The provider of {@link Connection} instances.
 	 * @param sql
-	 *            The raw SQL string to be executed.
+	 *        The raw SQL string to be executed.
 	 */
 	public StatementOperation(ConnectionProvider cnxProvider, String sql) {
 		this(cnxProvider, sql, null);
@@ -42,12 +39,12 @@ public class StatementOperation implements DbOperation {
 
 	/**
 	 * @param cnxProvider
-	 *            The provider of {@link Connection} instances.
+	 *        The provider of {@link Connection} instances.
 	 * @param sql
-	 *            The raw SQL string to be executed.
+	 *        The raw SQL string to be executed.
 	 * @param binder
-	 *            The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
-	 *            parameters.
+	 *        The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
+	 *        parameters.
 	 */
 	public StatementOperation(ConnectionProvider cnxProvider, String sql, PreparedStatementBinder binder) {
 		assert cnxProvider != null;
@@ -85,8 +82,6 @@ public class StatementOperation implements DbOperation {
 	 * <p>
 	 * If the specified consumer throws a {@link SQLException}, it will be wrapped in an unchecked
 	 * {@link RuntimeSQLException}.
-	 * 
-	 * @return
 	 */
 	public StatementOperation doAfterExecution(SQLConsumer<Statement> statementConsumer) {
 		this.afterExecutionConsumer = statementConsumer;
