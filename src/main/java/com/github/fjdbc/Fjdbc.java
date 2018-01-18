@@ -18,7 +18,7 @@ public class Fjdbc {
 	/**
 	 * Create a facade to the FJDBC library.
 	 * @param connectionProvider
-	 *        The provider of {@link Connection} instances.
+	 *        The provider of {@link java.sql.Connection} instances.
 	 */
 	public Fjdbc(ConnectionProvider connectionProvider) {
 		this.cnxProvider = connectionProvider;
@@ -42,7 +42,7 @@ public class Fjdbc {
 	 * @param sql
 	 *        The raw SQL string to be executed.
 	 * @param binder
-	 *        The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
+	 *        The binder of {@link java.sql.PreparedStatement} parameters, or {@code null} if this query does not have
 	 *        parameters.
 	 */
 	public StatementOperation statement(String sql, PreparedStatementBinder binder) {
@@ -74,7 +74,7 @@ public class Fjdbc {
 	 * @param sql
 	 *        The raw SQL string. It should be a SELECT statement.
 	 * @param extractor
-	 *        Extracts individual objects from a {@link ResultSet}.
+	 *        Extracts individual objects from a {@link java.sql.ResultSet}.
 	 */
 	public <T> Query<T> query(String sql, ResultSetExtractor<T> extractor) {
 		return new Query<>(cnxProvider, sql, extractor);
@@ -90,7 +90,7 @@ public class Fjdbc {
 	 *        The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
 	 *        parameters.
 	 * @param extractor
-	 *        Extracts individual objects from a {@link ResultSet}.
+	 *        Extracts individual objects from a {@link java.sql.ResultSet}.
 	 */
 	public <T> Query<T> query(String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
 		return new Query<>(cnxProvider, sql, binder, extractor);
