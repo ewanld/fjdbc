@@ -1,7 +1,5 @@
 package com.github.fjdbc;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.util.Collection;
 
 import com.github.fjdbc.op.CompositeOperation;
@@ -38,6 +36,10 @@ public class Fjdbc {
 		return new StatementOperation(cnxProvider, sql);
 	}
 
+	public StatementOperation statement(String sql, PreparedStatementBinder binder) {
+		return new StatementOperation(cnxProvider, sql, binder);
+	}
+
 	/**
 	 * Merge a sequence of {@link DbOperation} as a single {@link DbOperation}.
 	 * <p>
@@ -68,6 +70,10 @@ public class Fjdbc {
 	 */
 	public <T> Query<T> query(String sql, ResultSetExtractor<T> extractor) {
 		return new Query<>(cnxProvider, sql, extractor);
+	}
+
+	public <T> Query<T> query(String sql, PreparedStatementBinder binder, ResultSetExtractor<T> extractor) {
+		return new Query<>(cnxProvider, sql, binder, extractor);
 	}
 
 	public ConnectionProvider getConnectionProvider() {
