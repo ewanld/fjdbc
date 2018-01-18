@@ -9,10 +9,10 @@ import java.sql.Statement;
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.IntSequence;
 import com.github.fjdbc.RuntimeSQLException;
+import com.github.fjdbc.SQLConsumer;
+import com.github.fjdbc.internal.PreparedStatementEx;
 import com.github.fjdbc.query.Query;
-import com.github.fjdbc.util.SQLConsumer;
 import com.github.fjdbc.PreparedStatementBinder;
-import com.github.fjdbc.PreparedStatementEx;
 
 /**
  * Represent a database operation that modifies rows: insert, update, delete, etc.

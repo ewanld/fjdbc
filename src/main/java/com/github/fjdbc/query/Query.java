@@ -13,7 +13,7 @@ import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.IntSequence;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.RuntimeSQLException;
-import com.github.fjdbc.util.SQLConsumer;
+import com.github.fjdbc.SQLConsumer;
 
 /**
  * Represent an SQL SELECT statement.

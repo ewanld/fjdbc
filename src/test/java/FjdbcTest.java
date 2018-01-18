@@ -15,7 +15,6 @@ import com.github.fjdbc.op.NoOperation;
 import com.github.fjdbc.op.StatementOperation;
 import com.github.fjdbc.query.Query;
 import com.github.fjdbc.query.SingleRowExtractor;
-import com.github.fjdbc.util.CheckedUtil;
 
 /**
  * This class conforms to the POJO convention of maven surefire.
@@ -113,7 +112,11 @@ public class FjdbcTest {
 	}
 
 	public void write(Object o) {
-		CheckedUtil.quietly(() -> writer.write(o == null ? "null" : o.toString()));
+		try {
+			writer.write(o == null ? "null" : o.toString());
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void tearDown() throws Exception {

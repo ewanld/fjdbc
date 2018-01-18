@@ -1,9 +1,7 @@
-package com.github.fjdbc.util;
+package com.github.fjdbc;
 
 import java.sql.SQLException;
 import java.util.function.Consumer;
-
-import com.github.fjdbc.RuntimeSQLException;
 
 /**
  * A {@link Consumer} that may throw a {@link SQLException}.
