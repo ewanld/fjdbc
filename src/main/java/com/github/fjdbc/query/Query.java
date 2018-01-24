@@ -17,9 +17,8 @@ import com.github.fjdbc.SQLConsumer;
 
 /**
  * Represent an SQL SELECT statement.
- * 
  * @param <T>
- *            The type of objects to be extracted from the {@link ResultSet}}.
+ *        The type of objects to be extracted from the {@link ResultSet}}.
  */
 public class Query<T> {
 	private final String sql;
@@ -33,16 +32,15 @@ public class Query<T> {
 	 * Create a new query.
 	 * <p>
 	 * No actual connection is established with the database until the statement is executed.
-	 * 
 	 * @param connectionProvider
-	 *            The provider of {@link Connection} instances.
+	 *        The provider of {@link Connection} instances.
 	 * @param sql
-	 *            The raw SQL string. It should be a SELECT statement.
+	 *        The raw SQL string. It should be a SELECT statement.
 	 * @param binder
-	 *            The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
-	 *            parameters.
+	 *        The binder of {@link PreparedStatement} parameters, or {@code null} if this query does not have
+	 *        parameters.
 	 * @param extractor
-	 *            Extracts individual objects from a {@link ResultSet}.
+	 *        Extracts individual objects from a {@link ResultSet}.
 	 */
 	public Query(ConnectionProvider connectionProvider, String sql, PreparedStatementBinder binder,
 			ResultSetExtractor<T> extractor) {
@@ -60,13 +58,12 @@ public class Query<T> {
 	 * Create a new query.
 	 * <p>
 	 * No actual connection is established with the database until the statement is executed.
-	 * 
 	 * @param connectionProvider
-	 *            The provider of {@link Connection} instances.
+	 *        The provider of {@link Connection} instances.
 	 * @param sql
-	 *            The raw SQL string. It should be a SELECT statement.
+	 *        The raw SQL string. It should be a SELECT statement.
 	 * @param extractor
-	 *            Extracts individual objects from a {@link ResultSet}.
+	 *        Extracts individual objects from a {@link ResultSet}.
 	 */
 	public Query(ConnectionProvider connectionProvider, String sql, ResultSetExtractor<T> extractor) {
 		this(connectionProvider, sql, null, extractor);
@@ -92,7 +89,6 @@ public class Query<T> {
 	 * <p>
 	 * If the specified consumer throws a {@link SQLException}, it will be wrapped in an unchecked
 	 * {@link RuntimeSQLException}.
-	 * 
 	 * @return
 	 */
 	public Query<T> doAfterExecution(SQLConsumer<Statement> statementConsumer) {
@@ -128,7 +124,7 @@ public class Query<T> {
 			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(st);
 			extractor.extractAll(rs, callback);
 		} catch (final SQLException e) {
-			throw new RuntimeSQLException(e);
+			throw new RuntimeSQLException("Error executing query:\n" + sql, e);
 		} finally {
 			close(st);
 			cnxProvider.giveBack();
@@ -161,9 +157,8 @@ public class Query<T> {
 
 	/**
 	 * Execute the query, then returns the single object extracted from the {@link ResultSet}.
-	 * 
 	 * @throws IllegalStateException
-	 *             if more than one object could be extracted from the {@link ResultSet}.
+	 *         if more than one object could be extracted from the {@link ResultSet}.
 	 */
 	public T toSingleResult() {
 		final List<T> res = new ArrayList<>(1);
