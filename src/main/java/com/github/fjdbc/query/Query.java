@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collector;
 
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.IntSequence;
@@ -111,7 +112,7 @@ public class Query<T> {
 	}
 
 	/**
-	 * Execute the query, the calls the specified callback for each object extracted from the {@link ResultSet}.
+	 * Execute the query, then calls the specified callback for each object extracted from the {@link ResultSet}.
 	 */
 	public void forEach(Consumer<? super T> callback) {
 		Statement st = null;
@@ -129,6 +130,18 @@ public class Query<T> {
 			close(st);
 			cnxProvider.giveBack();
 		}
+	}
+
+	/**
+	 * Execute the query, the collect the objects extracted from the {@link ResultSet} using the specified collector.
+	 * @param <A> the mutable accumulation type of the reduction operation (often
+	 *        hidden as an implementation detail)
+	 * @param <R> the result type of the reduction operation
+	 */
+	public <A, R> R collect(Collector<T, A, R> collector) {
+		final A resultContainer = collector.supplier().get();
+		forEach(t -> collector.accumulator().accept(resultContainer, t));
+		return collector.finisher().apply(resultContainer);
 	}
 
 	private static void close(Statement st) {
