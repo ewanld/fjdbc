@@ -12,7 +12,22 @@ fjdbc is built around a small number of abstractions:
 * ```SQLException``` instances are wrapped in an unchecked ```RuntimeSQLException```.
 
 Requires Java >= 8.
-Latest version: 0.1.0.
+
+## Latest release
+The latest release is v0.1.0. To add a dependency using Maven, add to your pom.xml:
+```xml
+<dependency>
+    <groupId>com.github.ewanld</groupId>
+    <artifactId>fjdbc</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+## Build from source
+Using Maven:
+```
+mvn package
+```
 
 ## Examples
 ### Setup
