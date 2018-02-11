@@ -13,8 +13,7 @@ fjdbc is built around a small number of abstractions:
 
 Requires Java >= 8.
 
-## Latest release
-The latest release is v0.1.0. To add a dependency using Maven, add to your pom.xml:
+## Install (Maven)
 ```xml
 <dependency>
     <groupId>com.github.ewanld</groupId>
