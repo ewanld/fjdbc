@@ -23,7 +23,6 @@ Requires Java >= 8.
 ```
 
 ## Build from source
-Using Maven:
 ```
 mvn package
 ```
