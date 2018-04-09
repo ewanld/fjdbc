@@ -136,16 +136,18 @@ public class StatementOperation implements DbOperation {
 
 	@Override
 	public int executeAndCommit() {
+		Connection cnx = null;
 		try {
-			final int modifiedRows = execute(cnxProvider.borrow());
-			cnxProvider.commit();
+			cnx = cnxProvider.borrow();
+			final int modifiedRows = execute(cnx);
+			cnxProvider.commit(cnx);
 			return modifiedRows;
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException("Error executing the SQL statement: " + sql, e);
 		} finally {
 			// if the connection was already committed, roll back should be a no op.
-			cnxProvider.rollback();
-			cnxProvider.giveBack();
+			cnxProvider.rollback(cnx);
+			cnxProvider.giveBack(cnx);
 		}
 	}
 }

@@ -10,7 +10,7 @@ import com.github.fjdbc.ConnectionProvider;
  * <p>
  * The connection is not closed when {@link #giveBack()} is called.
  */
-public class SingleConnectionProvider extends ConnectionProvider {
+public class SingleConnectionProvider implements ConnectionProvider {
 	private final Connection cnx;
 
 	public SingleConnectionProvider(Connection cnx) {
@@ -18,12 +18,12 @@ public class SingleConnectionProvider extends ConnectionProvider {
 	}
 
 	@Override
-	protected Connection doBorrow() throws SQLException {
+	public Connection borrow() throws SQLException {
 		return cnx;
 	}
 
 	@Override
-	protected void doGiveBack(Connection _cnx) {
+	public void giveBack(Connection _cnx) {
 		// no op
 	}
 

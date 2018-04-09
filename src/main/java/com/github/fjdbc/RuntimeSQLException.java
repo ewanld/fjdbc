@@ -27,5 +27,4 @@ public class RuntimeSQLException extends RuntimeException {
 	public SQLException get() {
 		return exception;
 	}
-
 }

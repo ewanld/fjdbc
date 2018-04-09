@@ -18,9 +18,9 @@ public class CompositeOperation implements DbOperation {
 
 	/**
 	 * @param connectionProvider
-	 *            The provider of {@link Connection} instances.
+	 *        The provider of {@link Connection} instances.
 	 * @param operations
-	 *            The sequence of
+	 *        The sequence of
 	 */
 	public CompositeOperation(ConnectionProvider connectionProvider, DbOperation... operations) {
 		this.cnxProvider = connectionProvider;
@@ -35,16 +35,18 @@ public class CompositeOperation implements DbOperation {
 	public int executeAndCommit() {
 		if (operations.length == 0) return 0;
 
+		Connection cnx = null;
 		try {
-			final int modifiedRows = execute(cnxProvider.borrow());
-			cnxProvider.commit();
+			cnx = cnxProvider.borrow();
+			final int modifiedRows = execute(cnx);
+			cnxProvider.commit(cnx);
 			return modifiedRows;
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException(e);
 		} finally {
 			// if the connection was already committed, roll back should be a no op.
-			cnxProvider.rollback();
-			cnxProvider.giveBack();
+			cnxProvider.rollback(cnx);
+			cnxProvider.giveBack(cnx);
 		}
 	}
 
@@ -56,7 +58,8 @@ public class CompositeOperation implements DbOperation {
 			try {
 				modifiedRows += t.execute(cnx);
 			} catch (final SQLException e) {
-				throw new RuntimeSQLException(String.format("DB Operation %s/%s failed!", i + 1, operations.length), e);
+				throw new RuntimeSQLException(String.format("DB Operation %s/%s failed!", i + 1, operations.length),
+						e);
 			}
 
 		}

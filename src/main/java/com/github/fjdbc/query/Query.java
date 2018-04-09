@@ -7,8 +7,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.IntSequence;
@@ -116,19 +120,50 @@ public class Query<T> {
 	 */
 	public void forEach(Consumer<? super T> callback) {
 		Statement st = null;
+		Connection cnx = null;
 		try {
-			final Connection cnx = cnxProvider.borrow();
+			cnx = cnxProvider.borrow();
 			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
 			if (beforeExecutionConsumer != null) beforeExecutionConsumer.accept(st);
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
 			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(st);
-			extractor.extractAll(rs, callback);
+			extractor.iterator(rs).forEachRemaining(callback);
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException("Error executing query:\n" + sql, e);
 		} finally {
 			close(st);
-			cnxProvider.giveBack();
+			cnxProvider.giveBack(cnx);
+		}
+	}
+
+	/**
+	 * Execute the query, then loop through the ResultSet, discarding the extracted objects.
+	 */
+	public void process() {
+		forEach(c -> {});
+	}
+
+	/**
+	 * Warning: the returned stream must be closed manually by the caller.
+	 */
+	public Stream<T> stream() {
+		try {
+			final Connection cnx = cnxProvider.borrow();
+			final Statement st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
+			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
+			if (beforeExecutionConsumer != null) beforeExecutionConsumer.accept(st);
+			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
+			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(st);
+			final Stream<T> res = StreamSupport
+					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
+			res.onClose(() -> {
+				closeStatement(rs);
+				cnxProvider.giveBack(cnx);
+			});
+			return res;
+		} catch (final SQLException e) {
+			throw new RuntimeSQLException(e);
 		}
 	}
 
@@ -144,11 +179,27 @@ public class Query<T> {
 		return collector.finisher().apply(resultContainer);
 	}
 
-	private static void close(Statement st) {
+	static void close(Statement st) {
 		try {
 			if (st != null) st.close();
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException(e);
+		}
+	}
+
+	static void close(ResultSet rs) {
+		try {
+			if (rs != null) rs.close();
+		} catch (final SQLException e) {
+			throw new RuntimeSQLException(e);
+		}
+	}
+
+	private static void closeStatement(ResultSet rs) {
+		try {
+			if (rs != null) rs.getStatement().close();
+		} catch (final SQLException e) {
+			// no op
 		}
 	}
 
