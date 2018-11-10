@@ -7,14 +7,14 @@ import java.sql.SQLException;
  * A provider of {@link Connection} instances.
  * <p>
  * It abstracts how Connections are borrowed, returned, committed and and rolled back. The general contract is that,
- * for each call to {@link #borrow()}, there should be a following call to {@link #giveBack()}.
+ * for each call to {@link #borrow()}, there should be a following call to {@link #giveBack(Connection)}.
  * <p>
  * This class is thread safe.
  */
 public interface ConnectionProvider {
 
 	/**
-	 * Borrow a connection. This call should be followed to call to {@link #giveBack()}.
+	 * Borrow a connection. This call should be followed to call to {@link #giveBack(Connection)}.
 	 */
 	Connection borrow() throws SQLException;
 
