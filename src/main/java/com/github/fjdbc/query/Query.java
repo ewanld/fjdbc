@@ -250,7 +250,7 @@ public class Query<T> {
 		final List<T> res = new ArrayList<>(1);
 		forEach(res::add);
 		if (res.size() > 1) throw new IllegalStateException(
-				"The query returned several objects when only 1 was expected. The query was:\n" + sql);
+				"The query returned several rows when only 1 was expected. The query was:\n" + sql);
 		return res.size() == 1 ? res.get(0) : null;
 	}
 
