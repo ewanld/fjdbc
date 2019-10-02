@@ -167,6 +167,27 @@ public class Query<T> {
 		}
 	}
 
+	public long sqlCount() {
+		Statement st = null;
+		Connection cnx = null;
+
+		final String _sql = "select count(*) from (\n" + sql + "\n)";
+		try {
+			cnx = cnxProvider.borrow();
+			st = isPrepared() ? cnx.prepareStatement(_sql) : cnx.createStatement();
+			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
+			@SuppressWarnings("resource") final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery()
+					: st.executeQuery(_sql);
+			rs.next();
+			return rs.getLong(1);
+		} catch (final SQLException e) {
+			throw new RuntimeSQLException("Error executing query:\n" + _sql, e);
+		} finally {
+			close(st);
+			cnxProvider.giveBack(cnx);
+		}
+	}
+
 	/**
 	 * Execute the query, the collect the objects extracted from the {@link ResultSet} using the specified collector.
 	 * @param <A> the mutable accumulation type of the reduction operation (often
@@ -220,7 +241,8 @@ public class Query<T> {
 	}
 
 	/**
-	 * Execute the query, then returns the single object extracted from the {@link ResultSet}.
+	 * Execute the query, then returns the single object extracted from the {@link ResultSet}.<br>
+	 * If no object could be extracted, returns {@code null}
 	 * @throws IllegalStateException
 	 *         if more than one object could be extracted from the {@link ResultSet}.
 	 */
