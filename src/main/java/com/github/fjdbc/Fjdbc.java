@@ -3,10 +3,10 @@ package com.github.fjdbc;
 import java.sql.PreparedStatement;
 import java.util.Collection;
 
+import com.github.fjdbc.internal.StatementOperationImpl;
 import com.github.fjdbc.op.CompositeOperation;
 import com.github.fjdbc.op.DbOperation;
 import com.github.fjdbc.op.StatementOperation;
-import com.github.fjdbc.op.StatementOperationImpl;
 import com.github.fjdbc.op.StatementOperation;
 import com.github.fjdbc.query.Query;
 import com.github.fjdbc.query.ResultSetExtractor;

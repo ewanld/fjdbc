@@ -1,4 +1,4 @@
-package com.github.fjdbc.op;
+package com.github.fjdbc.internal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import com.github.fjdbc.IntSequence;
 import com.github.fjdbc.PreparedStatementBinder;
 import com.github.fjdbc.RuntimeSQLException;
 import com.github.fjdbc.SQLConsumer;
-import com.github.fjdbc.internal.PreparedStatementEx;
+import com.github.fjdbc.op.StatementOperation;
 
 /**
  * Represent a database operation that modifies rows: insert, update, delete, etc.
