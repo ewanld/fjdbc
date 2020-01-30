@@ -11,6 +11,7 @@ import java.sql.SQLException;
  * <p>
  * This class is thread safe.
  */
+@FunctionalInterface
 public interface ConnectionProvider {
 
 	/**
