@@ -62,8 +62,7 @@ public class FjdbcTest {
 	private void insert() throws IOException {
 		final StatementOperation statement1 = fjdbc.statement("insert into user values(1, 'name1')");
 		final StatementOperation statement2 = fjdbc.statement("insert into user values(2, 'name2')");
-		final StatementOperation statement3 = fjdbc.statement("insert into user values(?, ?)");
-		statement3.setBinder((ps, seq) -> {
+		final StatementOperation statement3 = fjdbc.statement("insert into user values(?, ?)", (ps, seq) -> {
 			ps.setInt(seq.next(), 3);
 			ps.setString(seq.next(), "name3");
 		});

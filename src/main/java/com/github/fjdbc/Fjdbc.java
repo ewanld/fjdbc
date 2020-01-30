@@ -6,6 +6,8 @@ import java.util.Collection;
 import com.github.fjdbc.op.CompositeOperation;
 import com.github.fjdbc.op.DbOperation;
 import com.github.fjdbc.op.StatementOperation;
+import com.github.fjdbc.op.StatementOperationImpl;
+import com.github.fjdbc.op.StatementOperation;
 import com.github.fjdbc.query.Query;
 import com.github.fjdbc.query.ResultSetExtractor;
 
@@ -32,7 +34,7 @@ public class Fjdbc {
 	 *        The raw SQL string to be executed.
 	 */
 	public StatementOperation statement(String sql) {
-		return new StatementOperation(cnxProvider, sql);
+		return new StatementOperationImpl(cnxProvider, sql);
 	}
 
 	/**
@@ -46,7 +48,7 @@ public class Fjdbc {
 	 *        parameters.
 	 */
 	public StatementOperation statement(String sql, PreparedStatementBinder binder) {
-		return new StatementOperation(cnxProvider, sql, binder);
+		return new StatementOperationImpl(cnxProvider, sql, binder);
 	}
 
 	/**

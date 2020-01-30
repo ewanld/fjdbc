@@ -51,8 +51,7 @@ public class Examples {
 			// @formatter:off
 			final String sql = "update user set name=? where name=?";
 			final int nRows = fjdbc
-				.statement(sql)
-				.setBinder((ps, seq) -> {
+				.statement(sql, (ps, seq) -> {
 					ps.setString(seq.next(), "jack");
 					ps.setString(seq.next(), "henri");
 				})
@@ -65,15 +64,13 @@ public class Examples {
 		{
 			// @formatter:off
 			final StatementOperation updateName = fjdbc
-				.statement("update user set name=? where name=?")
-				.setBinder((ps, seq) -> {
+				.statement("update user set name=? where name=?", (ps, seq) -> {
 					ps.setString(seq.next(), "jack");
 					ps.setString(seq.next(), "henri");
 				});
 
 			final StatementOperation deleteManagers = fjdbc
-				.statement("delete from user where role=?")
-				.setBinder((ps, seq) -> {
+				.statement("delete from user where role=?", (ps, seq) -> {
 					ps.setString(seq.next(), "manager");
 				});
 
