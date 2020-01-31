@@ -7,12 +7,14 @@ import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.RuntimeSQLException;
 
 /**
- * Represent a database operation that modifies rows: insert, update, delete, etc.
+ * Represent a database operation that modifies rows: insert, update, delete, etc. It can be made of a single
+ * statement, or of a sequence of statements.
+ * <p>
+ * All statements in one {@code DbOperation} must be part of the same database transaction.
  */
 public interface DbOperation {
 	/**
 	 * Execute the operation, leaving the connection open.
-	 * 
 	 * @return The number of modified rows.
 	 */
 	int execute(Connection connection) throws SQLException;
@@ -25,10 +27,9 @@ public interface DbOperation {
 	 * <li>In case of exception, rollback.
 	 * </ul>
 	 * The method {@link ConnectionProvider#giveBack} is called at the end.
-	 * 
 	 * @return The number of modified rows.
 	 * @throws RuntimeSQLException
-	 *             if a {@link SQLException} occurs.
+	 *         if a {@link SQLException} occurs.
 	 */
 	int executeAndCommit();
 }
