@@ -1,3 +1,8 @@
 /bin/
 /build/
+
+# maven build directory
 /target/
+
+# eclipse project settings
+/.settings/
