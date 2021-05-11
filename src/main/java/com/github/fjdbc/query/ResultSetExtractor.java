@@ -25,7 +25,9 @@ public interface ResultSetExtractor<T> {
 	 * and inbetween calls.<br>
 	 * Otherwise, {@code next()} is never called and it is the responsibility of implementors to call it.
 	 */
-	boolean autoCallNext();
+	default boolean autoCallNext() {
+		return false;
+	}
 
 	/**
 	 * Return an iterator that loops through the objects extracted from the ResultSet.

@@ -19,9 +19,4 @@ public interface ResultSetProcessor extends ResultSetExtractor<Void> {
 		return null;
 	}
 
-	@Override
-	default boolean autoCallNext() {
-		return false;
-	}
-
 }
