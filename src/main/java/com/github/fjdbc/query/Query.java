@@ -30,8 +30,8 @@ public class Query<T> {
 	private PreparedStatementBinder binder;
 	private final ResultSetExtractor<T> extractor;
 	private ConnectionProvider cnxProvider;
-	private SQLConsumer<Statement> beforeExecutionConsumer;
-	private SQLConsumer<Statement> afterExecutionConsumer;
+	private final List<SQLConsumer<Statement>> beforeExecutionConsumers = new ArrayList<>(2);
+	private final List<SQLConsumer<Statement>> afterExecutionConsumers = new ArrayList<>(2);
 
 	/**
 	 * Create a new query.
@@ -84,7 +84,7 @@ public class Query<T> {
 	 * {@link RuntimeSQLException}.
 	 */
 	public Query<T> doBeforeExecution(SQLConsumer<Statement> statementConsumer) {
-		this.beforeExecutionConsumer = statementConsumer;
+		this.beforeExecutionConsumers.add(statementConsumer);
 		return this;
 	}
 
@@ -97,8 +97,20 @@ public class Query<T> {
 	 * @return
 	 */
 	public Query<T> doAfterExecution(SQLConsumer<Statement> statementConsumer) {
-		this.afterExecutionConsumer = statementConsumer;
+		this.afterExecutionConsumers.add(statementConsumer);
 		return this;
+	}
+
+	private void executeBeforeExecutionConsumers(Statement st) throws SQLException {
+		for (final SQLConsumer<Statement> c : beforeExecutionConsumers) {
+			c.accept(st);
+		}
+	}
+
+	private void executeAfterExecutionConsumers(Statement st) throws SQLException {
+		for (final SQLConsumer<Statement> c : afterExecutionConsumers) {
+			c.accept(st);
+		}
 	}
 
 	/**
@@ -125,9 +137,9 @@ public class Query<T> {
 			cnx = cnxProvider.borrow();
 			st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
-			if (beforeExecutionConsumer != null) beforeExecutionConsumer.accept(st);
+			executeBeforeExecutionConsumers(st);
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
-			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(st);
+			executeAfterExecutionConsumers(st);
 			extractor.iterator(rs).forEachRemaining(callback);
 		} catch (final SQLException e) {
 			throw new RuntimeSQLException("Error executing query:\n" + sql, e);
@@ -152,9 +164,9 @@ public class Query<T> {
 			final Connection cnx = cnxProvider.borrow();
 			final Statement st = isPrepared() ? cnx.prepareStatement(sql) : cnx.createStatement();
 			if (isPrepared()) binder.bind((PreparedStatement) st, new IntSequence(1));
-			if (beforeExecutionConsumer != null) beforeExecutionConsumer.accept(st);
+			executeBeforeExecutionConsumers(st);
 			final ResultSet rs = isPrepared() ? ((PreparedStatement) st).executeQuery() : st.executeQuery(sql);
-			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(st);
+			executeAfterExecutionConsumers(st);
 			final Stream<T> res = StreamSupport
 					.stream(Spliterators.spliteratorUnknownSize(extractor.iterator(rs), Spliterator.ORDERED), false);
 			res.onClose(() -> {

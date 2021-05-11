@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.fjdbc.ConnectionProvider;
 import com.github.fjdbc.IntSequence;
@@ -21,8 +23,8 @@ public class StatementOperationImpl implements StatementOperation {
 	private final String sql;
 	private final PreparedStatementBinder binder;
 	private final ConnectionProvider cnxProvider;
-	private SQLConsumer<Statement> beforeExecutionConsumer;
-	private SQLConsumer<Statement> afterExecutionConsumer;
+	private final List<SQLConsumer<Statement>> beforeExecutionConsumers = new ArrayList<>(2);
+	private final List<SQLConsumer<Statement>> afterExecutionConsumers = new ArrayList<>(2);
 
 	/**
 	 * Create a statement.
@@ -69,7 +71,7 @@ public class StatementOperationImpl implements StatementOperation {
 	 */
 	@Override
 	public StatementOperation doBeforeExecution(SQLConsumer<Statement> statementConsumer) {
-		this.beforeExecutionConsumer = statementConsumer;
+		this.beforeExecutionConsumers.add(statementConsumer);
 		return this;
 	}
 
@@ -81,7 +83,7 @@ public class StatementOperationImpl implements StatementOperation {
 	 */
 	@Override
 	public StatementOperation doAfterExecution(SQLConsumer<Statement> statementConsumer) {
-		this.afterExecutionConsumer = statementConsumer;
+		this.afterExecutionConsumers.add(statementConsumer);
 		return this;
 	}
 
@@ -91,11 +93,23 @@ public class StatementOperationImpl implements StatementOperation {
 		return isPrepared() ? execute_preparedStatement(cnx) : execute_regularStatement(cnx);
 	}
 
+	private void executeBeforeExecutionConsumers(Statement st) throws SQLException {
+		for (final SQLConsumer<Statement> c : beforeExecutionConsumers) {
+			c.accept(st);
+		}
+	}
+
+	private void executeAfterExecutionConsumers(Statement st) throws SQLException {
+		for (final SQLConsumer<Statement> c : afterExecutionConsumers) {
+			c.accept(st);
+		}
+	}
+
 	private int execute_regularStatement(Connection cnx) throws SQLException {
 		try (Statement st = cnx.createStatement()) {
-			if (beforeExecutionConsumer != null) beforeExecutionConsumer.accept(st);
+			executeBeforeExecutionConsumers(st);
 			final int modifiedRows = st.executeUpdate(sql);
-			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(st);
+			executeAfterExecutionConsumers(st);
 			return modifiedRows;
 		}
 	}
@@ -104,7 +118,7 @@ public class StatementOperationImpl implements StatementOperation {
 		try (PreparedStatement ps = cnx.prepareStatement(sql)) {
 			final PreparedStatementEx psx = new PreparedStatementEx(ps);
 			binder.bind(psx, new IntSequence(1));
-			if (beforeExecutionConsumer != null) beforeExecutionConsumer.accept(ps);
+			executeBeforeExecutionConsumers(ps);
 			final int nRows;
 			if (psx.isBatch()) {
 				final int[] nRows_array = ps.executeBatch();
@@ -112,7 +126,7 @@ public class StatementOperationImpl implements StatementOperation {
 			} else {
 				nRows = ps.executeUpdate();
 			}
-			if (afterExecutionConsumer != null) afterExecutionConsumer.accept(ps);
+			executeAfterExecutionConsumers(ps);
 			return nRows;
 		}
 	}
